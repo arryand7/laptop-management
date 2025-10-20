@@ -162,8 +162,16 @@
                             </a>
                         </li>
                     @endif
-                    @if($role === 'admin')
-                        @if($user?->hasModule('admin.settings'))
+                    @php
+                        $hasSystemSettings = $user?->hasModule('admin.settings');
+                        $hasMasterData = $user?->hasModule('admin.users')
+                            || $user?->hasModule('admin.students')
+                            || $user?->hasModule('admin.laptops')
+                            || $user?->hasModule('admin.laptop-requests');
+                    @endphp
+
+                    @if($hasSystemSettings || $hasMasterData)
+                        @if($hasSystemSettings)
                             @php
                                 $settingsMenuOpen = request()->routeIs('admin.settings.*');
                             @endphp
@@ -201,14 +209,7 @@
                             </li>
                         @endif
 
-                        @php
-                            $showMasterData = $user?->hasModule('admin.users')
-                                || $user?->hasModule('admin.students')
-                                || $user?->hasModule('admin.laptops')
-                                || $user?->hasModule('admin.laptop-requests');
-                        @endphp
-
-                        @if($showMasterData)
+                        @if($hasMasterData)
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-table"></i>

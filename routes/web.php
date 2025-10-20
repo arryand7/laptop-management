@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard')->middleware('module:dashboard');
 
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('role:admin,staff')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', fn () => redirect()->route('dashboard'));
 
         Route::middleware('module:admin.students')->group(function () {
