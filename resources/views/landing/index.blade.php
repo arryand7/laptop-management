@@ -160,7 +160,7 @@
         </section>
 
         <footer class="landing-footer">
-            &copy; {{ now()->year }} {{ config('app.name', 'Laptop Management') }}. Seluruh hak cipta dilindungi.
+            &copy; {{ now()->year }} Sistem Peminjaman Laptop - <a href="https://www.linkedin.com/in/ryand-arifriantoni">Ryand Arifriantoni</a>
         </footer>
     </div>
 

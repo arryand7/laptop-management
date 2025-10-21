@@ -381,7 +381,7 @@
     <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark">
         <div class="p-3 control-sidebar-content os-host os-theme-light os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition os-host-overflow os-host-overflow-y">
-            <h5>Customize AdminLTE</h5>
+            <h5>Customize Design</h5>
             <hr class="mb-2">
             <div class="mb-4">
                 <input type="checkbox" class="mr-1" id="setting-dark-mode"
