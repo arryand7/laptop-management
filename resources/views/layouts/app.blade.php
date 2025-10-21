@@ -168,6 +168,10 @@
                             || $user?->hasModule('admin.students')
                             || $user?->hasModule('admin.laptops')
                             || $user?->hasModule('admin.laptop-requests');
+                        $masterMenuOpen = request()->routeIs('admin.users.*')
+                            || request()->routeIs('admin.students.*')
+                            || request()->routeIs('admin.laptops.*')
+                            || request()->routeIs('admin.laptop-requests.*');
                     @endphp
 
                     @if($hasSystemSettings || $hasMasterData)
@@ -210,8 +214,8 @@
                         @endif
 
                         @if($hasMasterData)
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item has-treeview {{ $masterMenuOpen ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link {{ $masterMenuOpen ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-table"></i>
                                     <p>MASTER DATA<i class="fas fa-angle-left right"></i></p>
                                 </a>

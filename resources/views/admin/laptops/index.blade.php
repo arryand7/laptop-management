@@ -15,9 +15,6 @@
                 <input type="file" name="file" class="text-xs" accept=".xlsx,.xls" required>
                 <button type="submit" class="rounded bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-700">Upload</button>
             </form>
-            <a href="{{ route('admin.laptops.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
-                <i class="fas fa-plus"></i> Tambah Data
-            </a>
         </div>
     </div>
 
@@ -63,7 +60,9 @@
                 <i class="fas fa-check"></i> Terapkan
             </button>
         </div>
-        <p class="text-xs text-slate-500">Centang laptop yang ingin diperbarui statusnya.</p>
+        <a href="{{ route('admin.laptops.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold shadow hover:bg-blue-400">
+            <i class="fas fa-plus"></i> Tambah Data
+        </a>
     </div>
 
     <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
