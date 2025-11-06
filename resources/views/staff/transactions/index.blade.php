@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <div id="transaction-feedback" class="mt-6 hidden rounded-2xl border border-rose-200 bg-white px-5 py-4 text-sm shadow-lg shadow-rose-200/40"></div>
+            <div id="transaction-scan-feedback" class="mt-6 hidden rounded-2xl border border-rose-200 bg-white px-5 py-4 text-sm shadow-lg shadow-rose-200/40"></div>
 
             <div id="transaction-card" class="mt-6"></div>
         </section>
@@ -167,7 +167,7 @@
             const studentInput = document.getElementById('student-input');
             const laptopInput = document.getElementById('laptop-input');
             const transactionCard = document.getElementById('transaction-card');
-            const transactionFeedback = document.getElementById('transaction-feedback');
+            const scanFeedback = document.getElementById('transaction-scan-feedback');
             const recentTbody = document.getElementById('recent-tbody');
             const toastContainer = document.getElementById('toast-container');
             const studentHelper = document.getElementById('transaction-student-helper');
@@ -229,6 +229,23 @@
                 usageInput.focus();
 
                 return true;
+            };
+
+            const getFeedbackContainer = (context = 'scan') => {
+                if (context === 'confirm') {
+                    return document.getElementById('transaction-confirm-feedback');
+                }
+
+                return scanFeedback;
+            };
+
+            const hideFeedback = (context = 'scan') => {
+                const container = getFeedbackContainer(context);
+                if (!container) {
+                    return;
+                }
+                container.classList.add('hidden');
+                container.innerHTML = '';
             };
 
             const focusElement = (element) => {
@@ -337,8 +354,7 @@
                 }
 
                 isLoading = true;
-                transactionFeedback.classList.add('hidden');
-                transactionFeedback.textContent = '';
+                hideFeedback('scan');
 
                 axios.post(previewUrl, {
                     student_qr: state.student,
@@ -387,6 +403,7 @@
                 }
 
                 clearFieldErrors();
+                hideFeedback('confirm');
 
                 const confirmButton = transactionCard.querySelector('[data-action="confirm"]');
                 if (confirmButton) {
@@ -442,6 +459,7 @@
                                     <i class="fas fa-check-circle text-base"></i>
                                     Confirm Borrow
                                 </button>
+                                <div id="transaction-confirm-feedback" class="mt-3 hidden rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600"></div>
                             </div>
                         </div>
                     </div>
@@ -494,6 +512,7 @@
                                     <i class="fas fa-redo text-base"></i>
                                     Confirm Return
                                 </button>
+                                <div id="transaction-confirm-feedback" class="mt-3 hidden rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600"></div>
                             </div>
                         </div>
                     </div>
@@ -506,6 +525,7 @@
                 }
 
                 clearFieldErrors();
+                hideFeedback('confirm');
 
                 const payload = {
                     student_qr: state.student,
@@ -552,10 +572,9 @@
                         if (!handled) {
                             const message = extractMessage(error) || 'Transaksi gagal diproses.';
                             showToast('error', message);
-                            showFeedback(message);
+                            showFeedback(message, 'confirm');
                         } else {
-                            transactionFeedback.classList.add('hidden');
-                            transactionFeedback.textContent = '';
+                            hideFeedback('confirm');
                         }
 
                         if (validationErrors) {
@@ -591,6 +610,7 @@
                 state.laptopMeta = null;
                 transactionCard.innerHTML = '';
                 clearFieldErrors();
+                hideFeedback('confirm');
             }
 
             function resetAll() {
@@ -599,15 +619,21 @@
                 state.student = '';
                 state.laptop = '';
                 resetCard();
-                transactionFeedback.classList.add('hidden');
-                transactionFeedback.textContent = '';
+                hideFeedback('scan');
+                hideFeedback('confirm');
                 resetHelper(studentHelper);
                 resetHelper(laptopHelper);
                 studentInput.focus();
             }
 
-            function showFeedback(message, type = 'error') {
-                transactionFeedback.innerHTML = `
+            function showFeedback(message, context = 'scan', type = 'error') {
+                const container = getFeedbackContainer(context);
+
+                if (!container) {
+                    return;
+                }
+
+                container.innerHTML = `
                     <div class="flex items-start gap-3">
                         <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full ${type === 'error' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'}">
                             <i class="${type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle'}"></i>
@@ -615,16 +641,18 @@
                         <div class="flex-1 text-sm font-medium text-slate-700">
                             ${message}
                         </div>
-                        <button type="button" id="transaction-feedback-close" class="ml-2 text-xs font-semibold uppercase tracking-wide text-slate-400 transition hover:text-slate-600">
+                        <button type="button" class="ml-2 text-xs font-semibold uppercase tracking-wide text-slate-400 transition hover:text-slate-600" data-feedback-dismiss>
                             Tutup
                         </button>
                     </div>
                 `;
-                transactionFeedback.classList.remove('hidden');
-                transactionFeedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                document.getElementById('transaction-feedback-close')?.addEventListener('click', () => {
-                    transactionFeedback.classList.add('hidden');
-                });
+                container.classList.remove('hidden');
+
+                if (context === 'scan') {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                container.querySelector('[data-feedback-dismiss]')?.addEventListener('click', () => hideFeedback(context));
             }
 
             function showToast(type, message) {
