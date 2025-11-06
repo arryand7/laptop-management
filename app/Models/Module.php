@@ -39,21 +39,24 @@ class Module extends Model
         $modules = static::query()->get()->keyBy('key');
 
         $configured->each(function (array $definition) use ($modules) {
-            $module = $modules->get($definition['key']);
+            $existingModule = $modules->get($definition['key']);
+            $wasCreated = false;
 
             $attributes = [
                 'name' => $definition['name'],
                 'description' => $definition['description'] ?? null,
             ];
 
-            if ($module) {
-                $module->update($attributes);
+            if ($existingModule) {
+                $existingModule->update($attributes);
+                $module = $existingModule;
             } else {
                 $module = static::create(array_merge(['key' => $definition['key']], $attributes));
+                $wasCreated = true;
             }
 
             $defaultRoles = $definition['default_roles'] ?? [];
-            if (!empty($defaultRoles)) {
+            if ($wasCreated && !empty($defaultRoles)) {
                 $users = User::whereIn('role', $defaultRoles)->get();
                 foreach ($users as $user) {
                     $user->modules()->syncWithoutDetaching([$module->id]);
