@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Staff\BorrowController as StaffBorrowController;
+use App\Http\Controllers\Staff\LaptopTransactionController as StaffLaptopTransactionController;
 use App\Http\Controllers\Staff\LookupController as StaffLookupController;
 use App\Http\Controllers\Staff\ReturnController as StaffReturnController;
 use App\Http\Controllers\Student\HistoryController as StudentHistoryController;
@@ -104,6 +105,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:staff,admin')->prefix('staff')->name('staff.')->group(function () {
         Route::get('lookup/students', [StaffLookupController::class, 'students'])->name('lookup.students');
         Route::get('lookup/laptops', [StaffLookupController::class, 'laptops'])->name('lookup.laptops');
+
+        Route::middleware('module:staff.transactions')->prefix('transactions')->name('transactions.')->group(function () {
+            Route::get('/', [StaffLaptopTransactionController::class, 'index'])->name('index');
+            Route::post('preview', [StaffLaptopTransactionController::class, 'preview'])->name('preview');
+            Route::post('confirm', [StaffLaptopTransactionController::class, 'confirm'])->name('confirm');
+        });
 
         Route::middleware('module:staff.borrow')->group(function () {
             Route::get('borrow', [StaffBorrowController::class, 'create'])->name('borrow.create');

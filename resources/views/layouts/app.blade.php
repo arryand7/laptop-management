@@ -282,6 +282,14 @@
                         @endif
                     @endif
                     @if(in_array($role, ['staff','admin']))
+                        @if($user?->hasModule('staff.transactions'))
+                            <li class="nav-item">
+                                <a href="{{ route('staff.transactions.index') }}" class="nav-link @if(request()->routeIs('staff.transactions.*')) active @endif">
+                                    <i class="nav-icon fas fa-exchange-alt"></i>
+                                    <p>Transaksi Laptop</p>
+                                </a>
+                            </li>
+                        @endif
                         @if($user?->hasModule('staff.borrow'))
                             <li class="nav-item">
                                 <a href="{{ route('staff.borrow.create') }}" class="nav-link @if(request()->routeIs('staff.borrow.*')) active @endif">
@@ -1153,6 +1161,12 @@
                 }
                 updateHelper(item);
                 hideSuggestions();
+
+                const selectionEvent = new CustomEvent('lookup:selected', {
+                    detail: { item },
+                    bubbles: true,
+                });
+                input.dispatchEvent(selectionEvent);
 
                 const nextFieldId = input.dataset.next;
                 if (nextFieldId) {

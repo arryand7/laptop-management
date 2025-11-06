@@ -75,6 +75,12 @@ return [
             'default_roles' => ['staff', 'admin'],
         ],
         [
+            'key' => 'staff.transactions',
+            'name' => 'Transaksi Laptop',
+            'description' => 'Mengakses halaman gabungan peminjaman dan pengembalian',
+            'default_roles' => ['staff', 'admin'],
+        ],
+        [
             'key' => 'student.history',
             'name' => 'Riwayat Peminjaman',
             'description' => 'Melihat riwayat peminjaman siswa',
