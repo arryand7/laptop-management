@@ -29,20 +29,66 @@
             @csrf
 
             @php
+                $genderLabels = [
+                    'male' => 'Laki-laki',
+                    'female' => 'Perempuan',
+                ];
+            @endphp
+
+            <div class="grid gap-3 md:grid-cols-4">
+                <div class="md:col-span-2">
+                    <label for="checklist-search" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Cari Laptop</label>
+                    <input type="search" id="checklist-search" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Cari kode, nama laptop, atau pemilik">
+                </div>
+                <div>
+                    <label for="checklist-status-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
+                    <select id="checklist-status-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="">Semua Status</option>
+                        <option value="available">Available</option>
+                        <option value="borrowed">Borrowed</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="retired">Retired</option>
+                        <option value="missing">Dilaporkan hilang</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="checklist-class-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas</label>
+                    <select id="checklist-class-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="">Semua Kelas</option>
+                        @foreach($classrooms as $classroom)
+                            <option value="{{ $classroom }}">{{ $classroom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="checklist-gender-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Jenis Kelamin</label>
+                    <select id="checklist-gender-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="">Semua</option>
+                        @foreach($genders as $gender)
+                            <option value="{{ $gender }}">{{ $genderLabels[$gender] ?? ucfirst($gender) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            @php
                 $selected = collect(old('found_laptops', $laptops->pluck('id')->all()))->map(fn ($id) => (int) $id);
                 $initialFound = $laptops->filter(fn ($laptop) => $laptop->status !== 'borrowed' && $selected->contains($laptop->id))->count();
                 $initialMissing = $laptops->filter(fn ($laptop) => $laptop->status !== 'borrowed' && !$selected->contains($laptop->id))->count();
             @endphp
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                <table id="checklist-table" class="table table-striped table-bordered table-sm datatable-default w-100">
                     <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         <tr>
                             <th class="px-3 py-2">No</th>
                             <th class="px-3 py-2">Ada?</th>
                             <th class="px-3 py-2">Kode Laptop</th>
-                            <th class="px-3 py-2">Nama &amp; Pemilik</th>
-                            <th class="px-3 py-2">Status Sistem</th>
+                            <th class="px-3 py-2">Nama Laptop</th>
+                            <th class="px-3 py-2">Pemilik</th>
+                            <th class="px-3 py-2">Kelas</th>
+                            <th class="px-3 py-2">Gender</th>
+                            <th class="px-3 py-2">Status</th>
                             <th class="px-3 py-2">Catatan</th>
                         </tr>
                     </thead>
@@ -63,16 +109,17 @@
                                     </label>
                                 </td>
                                 <td class="px-3 py-3 font-mono text-sm font-semibold text-slate-700">{{ $laptop->code }}</td>
-                                <td class="px-3 py-3 text-sm">
-                                    <div class="font-semibold text-slate-800">{{ $laptop->name }}</div>
-                                    <div class="text-xs text-slate-500">
-                                        @if($laptop->owner)
-                                            {{ $laptop->owner->name }} ({{ $laptop->owner->student_number ?? '-' }})
-                                        @else
-                                            Tidak terikat ke siswa
-                                        @endif
-                                    </div>
+                                <td class="px-3 py-3 text-sm font-semibold text-slate-800">{{ $laptop->name }}</td>
+                                <td class="px-3 py-3 text-sm text-slate-600">
+                                    @if($laptop->owner)
+                                        <div class="font-semibold text-slate-700">{{ $laptop->owner->name }}</div>
+                                        <div class="text-xs text-slate-500">{{ $laptop->owner->student_number ?? '-' }}</div>
+                                    @else
+                                        <span class="text-xs text-slate-400">Tidak terikat</span>
+                                    @endif
                                 </td>
+                                <td class="px-3 py-3 text-sm text-slate-600">{{ $laptop->owner?->classroom ?? '—' }}</td>
+                                <td class="px-3 py-3 text-sm text-slate-600">{{ $genderLabels[$laptop->owner?->gender] ?? ucfirst($laptop->owner?->gender ?? '—') }}</td>
                                 <td class="px-3 py-3 text-xs font-semibold">
                                     @php
                                         $statusClasses = [
@@ -153,17 +200,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             const total = {{ $totalCount }};
             const borrowedBase = {{ $initialBorrowedCount }};
-            const checkboxes = Array.from(document.querySelectorAll('.js-checklist-checkbox'));
             const summaryTotal = document.getElementById('summary-total');
             const summaryFound = document.getElementById('summary-found');
             const summaryMissing = document.getElementById('summary-missing');
             const summaryBorrowed = document.getElementById('summary-borrowed');
 
+            const getCheckboxes = () => Array.from(document.querySelectorAll('.js-checklist-checkbox'));
+
             const updateSummary = () => {
                 let found = 0;
                 let missing = 0;
 
-                checkboxes.forEach((checkbox) => {
+                getCheckboxes().forEach((checkbox) => {
                     const status = checkbox.dataset.status;
                     if (status === 'borrowed') {
                         return;
@@ -181,9 +229,77 @@
                 summaryBorrowed.textContent = borrowedBase;
             };
 
-            checkboxes.forEach((checkbox) => {
-                checkbox.addEventListener('change', updateSummary);
+            document.addEventListener('change', (event) => {
+                if (event.target.classList.contains('js-checklist-checkbox')) {
+                    updateSummary();
+                }
             });
+
+            const tableElement = window.jQuery ? window.jQuery('#checklist-table') : null;
+            let dataTable = null;
+
+            if (tableElement && tableElement.length) {
+                dataTable = tableElement.DataTable({
+                    paging: true,
+                    order: [[2, 'asc']],
+                    columnDefs: [
+                        { orderable: false, targets: [0, 1] },
+                        { searchable: false, targets: [0, 1] },
+                    ],
+                    pageLength: 25,
+                });
+
+                dataTable.on('draw', () => {
+                    setTimeout(updateSummary, 0);
+                });
+            }
+
+            const searchInput = document.getElementById('checklist-search');
+            const statusFilter = document.getElementById('checklist-status-filter');
+            const classFilter = document.getElementById('checklist-class-filter');
+            const genderFilter = document.getElementById('checklist-gender-filter');
+
+            if (dataTable) {
+                if (searchInput) {
+                    searchInput.addEventListener('input', (event) => {
+                        dataTable.search(event.target.value).draw();
+                    });
+                }
+
+                if (statusFilter) {
+                    const statusMap = {
+                        available: 'Available',
+                        borrowed: 'Borrowed',
+                        maintenance: 'Maintenance',
+                        retired: 'Retired',
+                        missing: 'Dilaporkan hilang',
+                    };
+
+                    statusFilter.addEventListener('change', (event) => {
+                        const value = event.target.value;
+                        if (!value) {
+                            dataTable.column(7).search('').draw();
+                            return;
+                        }
+                        const label = statusMap[value] ?? value;
+                        dataTable.column(7).search(label, true, false).draw();
+                    });
+                }
+
+                if (classFilter) {
+                    classFilter.addEventListener('change', (event) => {
+                        const value = event.target.value;
+                        dataTable.column(5).search(value || '', true, false).draw();
+                    });
+                }
+
+                if (genderFilter) {
+                    genderFilter.addEventListener('change', (event) => {
+                        const value = event.target.value;
+                        dataTable.column(6).search(value || '', true, false).draw();
+                    });
+                }
+            }
 
             updateSummary();
         });

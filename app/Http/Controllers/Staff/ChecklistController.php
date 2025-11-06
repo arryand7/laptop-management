@@ -24,11 +24,25 @@ class ChecklistController extends Controller
         $total = $laptops->count();
         $borrowedCount = $laptops->where('status', 'borrowed')->count();
 
+        $classrooms = $laptops->map(fn (Laptop $laptop) => $laptop->owner?->classroom)
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $genders = $laptops->map(fn (Laptop $laptop) => $laptop->owner?->gender)
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
         return view('staff.checklist.create', [
             'laptops' => $laptops,
             'totalCount' => $total,
             'initialBorrowedCount' => $borrowedCount,
             'recentSession' => ChecklistSession::with('staff')->latest()->first(),
+            'classrooms' => $classrooms,
+            'genders' => $genders,
         ]);
     }
 
