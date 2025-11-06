@@ -11,7 +11,7 @@
             </div>
             <div class="flex gap-2 text-xs font-semibold uppercase">
                 <a href="{{ route('admin.settings.lending') }}" class="text-slate-500 hover:text-slate-700">← Peraturan Laptop</a>
-                <a href="{{ route('admin.settings.ai') }}" class="text-blue-600 hover:text-blue-500">Integrasi AI →</a>
+                <a href="{{ route('admin.settings.safe-exam-browser') }}" class="text-blue-600 hover:text-blue-500">Safe Exam Browser →</a>
             </div>
         </div>
 

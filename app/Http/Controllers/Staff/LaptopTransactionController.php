@@ -66,6 +66,10 @@ class LaptopTransactionController extends Controller
             return $this->respondError('Laptop tidak ditemukan. Pastikan QR/kode yang dipindai sudah benar.');
         }
 
+        if ($laptop->is_missing) {
+            return $this->respondError('Laptop ini dilaporkan hilang pada checklist terakhir. Hubungi admin untuk verifikasi.');
+        }
+
         $activeBorrow = $this->findActiveBorrow($laptop);
 
         if ($laptop->status === 'available') {
@@ -150,6 +154,10 @@ class LaptopTransactionController extends Controller
         $laptop = $this->resolveLaptop($validated['laptop_qr']);
         if (!$laptop) {
             return $this->respondError('Laptop tidak ditemukan. Pastikan QR/kode yang dipindai sudah benar.');
+        }
+
+        if ($laptop->is_missing) {
+            return $this->respondError('Laptop ini dilaporkan hilang pada checklist terakhir. Hubungi admin sebelum melanjutkan.');
         }
 
         $activeBorrow = $this->findActiveBorrow($laptop);

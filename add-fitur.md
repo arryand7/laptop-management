@@ -1,237 +1,227 @@
-Sure! Here’s the design and system concept for the new feature — the **“One-Page Laptop Borrow & Return System”** — including logic flow, UI/UX design, and backend structure.
+**Laptop Rack Checklist Page** — where all laptops are displayed in a table with checkboxes pre-selected by default, and staff can uncheck those that are missing from the rack.
 
 ---
 
 ## 🧠 **1. Core Concept of the Feature**
 
-### 🎯 Goal:
+### 🎯 **Goal:**
 
-To merge the *borrowing* and *returning* processes into **a single, interactive page**, requiring only two main inputs:
+Provide a page that:
 
-1. **Student Data (via QR/Barcode)**
-2. **Laptop Data (via QR/Barcode)**
+* Displays **all laptops** from the database.
+* By default, **all laptops are pre-checked** ✅ (meaning they are present on the rack).
+* Staff only need to **uncheck** ❌ laptops that are **not on the rack**.
+* When the checklist is submitted, the system will:
 
-The system will automatically:
-
-* Detect whether the action is a **new borrowing** or a **return**.
-* Display the appropriate form dynamically.
-* Record the data with the correct status (*Borrowed* or *Returned*).
+  * Record the results (found/missing laptops).
+  * Automatically mark **violations** for laptops missing without permission.
 
 ---
 
-## 🔄 **2. System Logic Flow**
-
-Here’s how the backend logic works:
+## 🔄 **2. System Workflow**
 
 ```
-[Staff opens "Laptop Transaction" page]
+[Staff opens "Laptop Rack Checklist" page]
         ↓
-[Scan Student QR Code]  → retrieve student data
+[System loads all laptops pre-checked by default]
         ↓
-[Scan Laptop QR Code]   → retrieve laptop data
+[Staff unchecks any laptop not found on the rack]
         ↓
-┌───────────────────────────────────┐
-│  Check laptop status in database  │
-├───────────────────────────────────┤
-│  If laptop.status = "available" → BORROW PROCESS  │
-│  If laptop.status = "borrowed"  → RETURN PROCESS  │
-└───────────────────────────────────┘
+[Click “Save Checklist” button]
         ↓
-[Execute the appropriate action]
+[System compares unchecked laptops]
         ↓
-[Display confirmation and notification]
+[Mark them as “missing” or “borrowed”]
+        ↓
+[Automatically log violations if missing without reason]
+        ↓
+[Save results and display summary]
 ```
 
 ---
 
-## 🧩 **3. UI/UX Page Design**
+## 🧩 **3. UI/UX Design**
 
-### 🖥️ **Page: “Laptop Transaction”**
-
-This layout is designed for speed, clarity, and efficiency for school staff.
+### 🖥️ **Page: “Laptop Rack Checklist”**
 
 ---
 
 ### 🔹 **Header**
 
-* Title: **Laptop Borrow/Return System**
-* Subtitle: *“Scan student and laptop QR codes to automatically borrow or return laptops.”*
-* Header color: **Primary Blue (#1E88E5)**
+* Title: **Laptop Rack Checklist**
+* Subtitle: *“Check and ensure all laptops have returned to the rack. Uncheck those that are missing.”*
+* Top-right buttons:
+
+  * 🔄 **Start New Checklist**
+  * 📜 **Checklist History**
 
 ---
 
-### 🔹 **Main Input Section**
+### 🔹 **Laptop List Table**
 
-A large centered card with two columns side-by-side.
+| No | Checkbox | Laptop Code | Laptop Name         | System Status | Notes            |
+| -- | -------- | ----------- | ------------------- | ------------- | ---------------- |
+| 1  | ☑️       | LPT-001     | HP Elitebook 840 G5 | Available     | —                |
+| 2  | ☑️       | LPT-002     | Asus VivoBook       | Borrowed      | Currently in use |
+| 3  | ☑️       | LPT-003     | Lenovo ThinkPad     | Available     | —                |
+| 4  | ☑️       | LPT-004     | Acer Aspire         | Available     | —                |
 
-| Left Column                         | Right Column                        |
-| ----------------------------------- | ----------------------------------- |
-| **Scan Student QR**                 | **Scan Laptop QR**                  |
-| User icon + input field             | Laptop icon + input field           |
-| Automatically filled after scanning | Automatically filled after scanning |
-| Small *Clear / Reset* button below  | Small *Clear / Reset* button below  |
-
-💡 **Input Design:**
-
-* Background: `#FFFFFF`
-* Border: `#E2E8F0`
-* Focus line: `#1E88E5`
-* Small icons inside (`<User />`, `<Laptop />`)
+> ✅ All laptops are checked by default.
+> ❌ The staff only **unchecks** laptops that are **missing from the rack**.
 
 ---
 
-### 🔹 **Automatic Information Section**
+### 🔹 **Below the Table**
 
-After both QR codes are scanned:
-
-* The system shows an **information card** based on detection.
-
-#### If laptop status = *Available → Borrowing Process*
-
-**Information Card:**
+A real-time summary updates automatically when boxes are unchecked:
 
 ```
-Student: Ahmad Fauzi (X-2)
-Laptop: HP Elitebook 840 G5
-Status: READY TO BORROW
----------------------------------------
-Purpose of Use: [Text Input Field]
-Borrow Time: auto (now)
-Expected Return: auto (now + X hours)
-[Confirm Borrow Button]
+Total Laptops: 40
+Found: 38
+Missing: 2
+Currently Borrowed: 3
 ```
 
-#### If laptop status = *Borrowed by same student → Return Process*
+Right-aligned action button:
+
+* **[💾 Save Checklist]** — primary color `#1E88E5`
+
+---
+
+### 🔹 **After Saving**
+
+Show a confirmation modal or alert:
 
 ```
-Student: Ahmad Fauzi (X-2)
-Laptop: HP Elitebook 840 G5
-Status: RETURN IN PROGRESS
----------------------------------------
-Borrowed At: 2025-10-13 08:00
-Due At: 2025-10-13 15:00
-Return Time: auto (now)
-[Confirm Return Button]
+Checklist successfully saved!
+📦 Found: 38
+⚠️ Missing: 2
+🕓 Borrowed: 3
 ```
 
-#### If laptop status = *Borrowed by another student*
+If missing laptops have no borrow or permission record, automatically generate violations:
 
 ```
-⚠️ Error: Laptop is currently borrowed by another student (Aisha Putri - X-3)
+Violations added for:
+- LPT-012: Laptop not found
+- LPT-020: Laptop not found
 ```
 
 ---
 
-### 🔹 **Notifications & Feedback**
+## ⚙️ **4. Database Structure**
 
-Use *toast notifications* for quick responses:
+Simplified version (compared to the scanning-based checklist).
 
-* ✅ *“Borrowing successfully recorded.”*
-* 🔁 *“Laptop successfully returned.”*
-* ⚠️ *“Laptop is already borrowed by another student.”*
+### 📘 Table: `checklist_sessions`
 
----
-
-### 🔹 **Recent Transactions (optional, bottom section)**
-
-A small table displaying the 5 most recent records:
-
-| Time  | Student | Laptop | Action | Status  |
-| ----- | ------- | ------ | ------ | ------- |
-| 08:05 | Ahmad   | HP G5  | Borrow | Success |
-| 09:30 | Ahmad   | HP G5  | Return | On Time |
+| Field         | Type     | Description                |
+| ------------- | -------- | -------------------------- |
+| id            | INT      | Primary key                |
+| staff_id      | INT      | Staff performing checklist |
+| start_time    | DATETIME | When checklist started     |
+| end_time      | DATETIME | When checklist ended       |
+| total_laptops | INT      | Total number of laptops    |
+| found_count   | INT      | Number found               |
+| missing_count | INT      | Number missing             |
+| note          | TEXT     | Optional notes             |
 
 ---
 
-## ⚙️ **4. Backend Logic (Laravel Example)**
+### 📘 Table: `checklist_details`
 
-### Main Routes:
+| Field                | Type                               | Description                      |
+| -------------------- | ---------------------------------- | -------------------------------- |
+| id                   | INT                                | Primary key                      |
+| checklist_session_id | INT                                | Foreign key to checklist session |
+| laptop_id            | INT                                | Linked laptop                    |
+| status               | ENUM('found','missing','borrowed') | Result status                    |
+| note                 | TEXT                               | Optional note                    |
+
+---
+
+### Routes:
 
 ```php
-Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
-Route::post('/transaction/process', [TransactionController::class, 'process'])->name('transaction.process');
+Route::get('/checklist', [ChecklistController::class, 'index'])->name('checklist.index');
+Route::post('/checklist/save', [ChecklistController::class, 'save'])->name('checklist.save');
 ```
 
-### Controller Logic:
+### Controller Example:
 
 ```php
-public function process(Request $request)
+public function save(Request $request)
 {
-    $student = User::where('qr_value', $request->student_qr)->first();
-    $laptop = Laptop::where('qr_value', $request->laptop_qr)->first();
+    $checkedLaptops = $request->input('found_laptops', []);
+    $allLaptops = Laptop::all();
+    $session = ChecklistSession::create([
+        'staff_id' => auth()->id(),
+        'start_time' => now(),
+        'end_time' => now(),
+        'total_laptops' => $allLaptops->count(),
+    ]);
 
-    if (!$student || !$laptop) {
-        return response()->json(['status' => 'error', 'message' => 'Invalid QR code.']);
-    }
+    foreach ($allLaptops as $laptop) {
+        if (in_array($laptop->id, $checkedLaptops)) {
+            // Laptop found
+            ChecklistDetail::create([
+                'checklist_session_id' => $session->id,
+                'laptop_id' => $laptop->id,
+                'status' => 'found'
+            ]);
+        } else {
+            // Laptop missing or borrowed
+            $status = $laptop->status === 'borrowed' ? 'borrowed' : 'missing';
 
-    if ($laptop->status == 'available') {
-        // → Borrowing process
-        $borrow = Borrowing::create([
-            'user_id' => $student->id,
-            'laptop_id' => $laptop->id,
-            'petugas_id' => auth()->id(),
-            'usage_description' => $request->usage,
-            'borrow_time' => now(),
-            'due_time' => now()->addHours(6),
-            'status' => 'borrowed'
-        ]);
-        $laptop->update(['status' => 'borrowed']);
-
-        return response()->json(['status' => 'success', 'message' => 'Laptop borrowed successfully.']);
-    } else {
-        // → Return process
-        $activeBorrow = Borrowing::where('laptop_id', $laptop->id)
-            ->where('status', 'borrowed')->first();
-
-        if ($activeBorrow && $activeBorrow->user_id == $student->id) {
-            $status = now()->greaterThan($activeBorrow->due_time) ? 'late' : 'returned';
-            $activeBorrow->update([
-                'return_time' => now(),
+            ChecklistDetail::create([
+                'checklist_session_id' => $session->id,
+                'laptop_id' => $laptop->id,
                 'status' => $status
             ]);
-            $laptop->update(['status' => 'available']);
 
-            if ($status == 'late') {
+            if ($status === 'missing') {
                 Violation::create([
-                    'user_id' => $student->id,
-                    'borrowing_id' => $activeBorrow->id,
-                    'violation_type' => 'Late Return',
+                    'laptop_id' => $laptop->id,
+                    'violation_type' => 'Laptop not found in rack',
                     'violation_date' => now(),
                     'sanction_status' => 'not_applied'
                 ]);
             }
-
-            return response()->json(['status' => 'success', 'message' => 'Laptop returned successfully.']);
         }
-
-        return response()->json(['status' => 'error', 'message' => 'Laptop borrowed by another user.']);
     }
+
+    $session->update([
+        'found_count' => ChecklistDetail::where('checklist_session_id', $session->id)->where('status', 'found')->count(),
+        'missing_count' => ChecklistDetail::where('checklist_session_id', $session->id)->where('status', 'missing')->count(),
+    ]);
+
+    return response()->json(['message' => 'Checklist successfully saved']);
 }
 ```
 
 ---
 
-## 📊 **5. UX Advantages**
+## 🎨 **6. Color Scheme & UI Elements**
 
-✅ Only **one page** for both processes — fast and efficient.
-✅ No need to choose “borrow” or “return” mode — auto-detected by system.
-✅ Lower error risk (QR-based).
-✅ Compatible with *USB barcode scanners* or *mobile camera input*.
-✅ Can serve as a **cashier-like full-screen mode** for staff use.
+| Element          | Color                           | Description |
+| ---------------- | ------------------------------- | ----------- |
+| Header           | `#1E88E5`                       | Main blue   |
+| Table background | `#FFFFFF`                       | Clean white |
+| Odd row          | `#F8FAFC`                       | Light gray  |
+| Checkbox active  | `#1E88E5`                       | Bright blue |
+| Found            | Green `#10B981`                 |             |
+| Missing          | Red `#EF4444`                   |             |
+| Borrowed         | Yellow `#F59E0B`                |             |
+| Save button      | Blue `#1E88E5`, hover `#1565C0` |             |
 
 ---
 
-## 🧩 **6. Color Palette & Aesthetic**
+## 💡 **7. Advantages of This Design**
 
-To match your **blue primary + light navy accent** theme:
-
-* Background: `#F8FAFC`
-* Card background: `#FFFFFF`
-* Primary button: `#1E88E5`
-* Status colors:
-
-  * READY → Light Green `#DCFCE7`
-  * RETURN → Light Blue `#DBEAFE`
-  * ERROR → Light Red `#FEE2E2`
+✅ Fast checklist — simply uncheck missing laptops
+✅ No need for individual QR scans
+✅ Automatically updates database and generates reports
+✅ Can be done anytime (ad-hoc inventory check)
+✅ Automatically creates **violation records** for missing laptops
 
 ---

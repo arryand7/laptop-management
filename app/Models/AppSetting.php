@@ -29,5 +29,16 @@ class AppSetting extends Model
         'gemini_api_key',
         'huggingface_model',
         'huggingface_api_key',
+        'seb_enabled',
+        'seb_config_link',
+        'seb_browser_exam_key',
+        'seb_exit_key_combination',
+        'seb_config_password',
+        'seb_client_config_path',
+        'seb_additional_notes',
+    ];
+
+    protected $casts = [
+        'seb_enabled' => 'boolean',
     ];
 }

@@ -204,6 +204,12 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="{{ route('admin.settings.safe-exam-browser') }}" class="nav-link @if(request()->routeIs('admin.settings.safe-exam-browser*')) active @endif">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Safe Exam Browser</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{{ route('admin.settings.ai') }}" class="nav-link @if(request()->routeIs('admin.settings.ai*')) active @endif">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Integrasi AI</p>
@@ -287,6 +293,14 @@
                                 <a href="{{ route('staff.transactions.index') }}" class="nav-link @if(request()->routeIs('staff.transactions.*')) active @endif">
                                     <i class="nav-icon fas fa-exchange-alt"></i>
                                     <p>Transaksi Laptop</p>
+                                </a>
+                            </li>
+                        @endif
+                        @if($user?->hasModule('staff.checklist'))
+                            <li class="nav-item">
+                                <a href="{{ route('staff.checklist.create') }}" class="nav-link @if(request()->routeIs('staff.checklist.*')) active @endif">
+                                    <i class="nav-icon fas fa-clipboard-check"></i>
+                                    <p>Checklist Laptop</p>
                                 </a>
                             </li>
                         @endif

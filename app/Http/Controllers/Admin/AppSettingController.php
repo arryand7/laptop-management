@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\UpdateAiSettingRequest;
 use App\Http\Requests\Admin\UpdateApplicationSettingRequest;
 use App\Http\Requests\Admin\UpdateLendingSettingRequest;
 use App\Http\Requests\Admin\UpdateMailSettingRequest;
+use App\Http\Requests\Admin\UpdateSafeExamBrowserSettingRequest;
 use App\Models\AppSetting;
 use App\Support\AppSettingManager;
 use Illuminate\Http\RedirectResponse;
@@ -129,6 +130,63 @@ class AppSettingController extends Controller
         AppSettingManager::refreshCache();
 
         return back()->with('status', 'Integrasi AI berhasil diperbarui.');
+    }
+
+    public function safeExamBrowser(): View
+    {
+        return view('admin.settings.safe-exam-browser', [
+            'setting' => $this->setting(),
+        ]);
+    }
+
+    public function updateSafeExamBrowser(UpdateSafeExamBrowserSettingRequest $request): RedirectResponse
+    {
+        $setting = $this->setting();
+        $validated = $request->validated();
+
+        $setting->seb_enabled = $request->boolean('seb_enabled');
+        if (array_key_exists('seb_config_link', $validated)) {
+            $setting->seb_config_link = trim((string) ($validated['seb_config_link'] ?? '')) ?: null;
+        }
+
+        if (array_key_exists('seb_browser_exam_key', $validated)) {
+            $setting->seb_browser_exam_key = trim((string) ($validated['seb_browser_exam_key'] ?? '')) ?: null;
+        }
+
+        if (array_key_exists('seb_exit_key_combination', $validated)) {
+            $setting->seb_exit_key_combination = trim((string) ($validated['seb_exit_key_combination'] ?? '')) ?: null;
+        }
+
+        if (array_key_exists('seb_additional_notes', $validated)) {
+            $setting->seb_additional_notes = trim((string) ($validated['seb_additional_notes'] ?? '')) ?: null;
+        }
+
+        if ($request->filled('seb_config_password')) {
+            $setting->seb_config_password = trim((string) $validated['seb_config_password']);
+        } elseif ($request->boolean('seb_clear_password')) {
+            $setting->seb_config_password = null;
+        }
+
+        if ($request->boolean('seb_remove_config') && $setting->seb_client_config_path) {
+            if (Storage::disk('public')->exists($setting->seb_client_config_path)) {
+                Storage::disk('public')->delete($setting->seb_client_config_path);
+            }
+            $setting->seb_client_config_path = null;
+        }
+
+        if ($request->hasFile('seb_config_file')) {
+            if ($setting->seb_client_config_path && Storage::disk('public')->exists($setting->seb_client_config_path)) {
+                Storage::disk('public')->delete($setting->seb_client_config_path);
+            }
+
+            $path = $request->file('seb_config_file')->store('seb-config', 'public');
+            $setting->seb_client_config_path = $path;
+        }
+
+        $setting->save();
+        AppSettingManager::refreshCache();
+
+        return back()->with('status', 'Pengaturan Safe Exam Browser berhasil diperbarui.');
     }
 
     protected function setting(): AppSetting

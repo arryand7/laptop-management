@@ -17,6 +17,7 @@ class Laptop extends Model
         'serial_number',
         'specifications',
         'status',
+        'is_missing',
         'owner_id',
         'qr_code',
         'notes',
@@ -28,6 +29,7 @@ class Laptop extends Model
         return [
             'specifications' => 'array',
             'last_checked_at' => 'datetime',
+            'is_missing' => 'boolean',
         ];
     }
 
@@ -53,11 +55,27 @@ class Laptop extends Model
 
     public function markBorrowed(): void
     {
-        $this->update(['status' => 'borrowed']);
+        $this->update([
+            'status' => 'borrowed',
+            'is_missing' => false,
+            'last_checked_at' => now(),
+        ]);
     }
 
     public function markAvailable(): void
     {
-        $this->update(['status' => 'available']);
+        $this->update([
+            'status' => 'available',
+            'is_missing' => false,
+            'last_checked_at' => now(),
+        ]);
+    }
+
+    public function markMissing(): void
+    {
+        $this->update([
+            'is_missing' => true,
+            'last_checked_at' => now(),
+        ]);
     }
 }

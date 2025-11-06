@@ -30,6 +30,7 @@ class LaptopFactory extends Factory
                 'os' => fake()->randomElement(['Windows 11', 'Windows 10']),
             ],
             'status' => 'available',
+            'is_missing' => false,
             'owner_id' => null,
             'qr_code' => strtoupper(Str::uuid()->toString()),
             'notes' => null,

@@ -9,7 +9,7 @@
                 <h1 class="text-xl font-semibold text-slate-800">Integrasi AI</h1>
                 <p class="mt-1 text-sm text-slate-500">Simpan API key untuk penyedia AI yang digunakan chatbot dan fitur analitik.</p>
             </div>
-            <a href="{{ route('admin.settings.mail') }}" class="text-xs font-semibold uppercase text-slate-500 hover:text-slate-700">← Pengaturan Email</a>
+            <a href="{{ route('admin.settings.safe-exam-browser') }}" class="text-xs font-semibold uppercase text-slate-500 hover:text-slate-700">← Safe Exam Browser</a>
         </div>
 
         @if(session('status'))

@@ -115,6 +115,12 @@ class BorrowController extends Controller
             return back()->withErrors(['laptop_qr' => $message])->withInput();
         }
 
+        if ($laptop->is_missing) {
+            return back()->withErrors([
+                'laptop_qr' => "Laptop {$laptop->code} dilaporkan hilang dalam checklist terakhir dan tidak dapat dipinjam.",
+            ])->withInput();
+        }
+
         $dueAt = Carbon::parse($validated['due_at']);
 
         $transaction = $borrowService->checkout(

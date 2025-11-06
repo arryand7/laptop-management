@@ -25,6 +25,13 @@ class AppSettingManager
             'openai_model' => config('services.openai.model', 'gpt-4o-mini'),
             'gemini_model' => config('services.gemini.model', 'gemini-1.5-flash'),
             'huggingface_model' => config('services.huggingface.model', 'mistralai/Mistral-7B-Instruct-v0.2'),
+            'seb_enabled' => false,
+            'seb_config_link' => null,
+            'seb_browser_exam_key' => null,
+            'seb_exit_key_combination' => null,
+            'seb_config_password' => null,
+            'seb_client_config_path' => null,
+            'seb_additional_notes' => null,
         ];
 
         if (!Schema::hasTable('app_settings')) {

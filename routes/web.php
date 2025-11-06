@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Staff\BorrowController as StaffBorrowController;
+use App\Http\Controllers\Staff\ChecklistController as StaffChecklistController;
 use App\Http\Controllers\Staff\LaptopTransactionController as StaffLaptopTransactionController;
 use App\Http\Controllers\Staff\LookupController as StaffLookupController;
 use App\Http\Controllers\Staff\ReturnController as StaffReturnController;
@@ -71,6 +72,8 @@ Route::middleware('auth')->group(function () {
 
             Route::get('ai', [AppSettingController::class, 'ai'])->name('ai');
             Route::put('ai', [AppSettingController::class, 'updateAi'])->name('ai.update');
+            Route::get('safe-exam-browser', [AppSettingController::class, 'safeExamBrowser'])->name('safe-exam-browser');
+            Route::put('safe-exam-browser', [AppSettingController::class, 'updateSafeExamBrowser'])->name('safe-exam-browser.update');
 
             Route::get('/', function () {
                 return redirect()->route('admin.settings.application');
@@ -121,6 +124,13 @@ Route::middleware('auth')->group(function () {
             Route::get('return', [StaffReturnController::class, 'create'])->name('return.create');
             Route::post('return', [StaffReturnController::class, 'store'])->name('return.store');
             Route::post('return/{transaction}/quick', [StaffReturnController::class, 'quickReturn'])->name('return.quick');
+        });
+
+        Route::middleware('module:staff.checklist')->prefix('checklist')->name('checklist.')->group(function () {
+            Route::get('/', [StaffChecklistController::class, 'create'])->name('create');
+            Route::post('/', [StaffChecklistController::class, 'store'])->name('store');
+            Route::get('history', [StaffChecklistController::class, 'history'])->name('history');
+            Route::get('{session}', [StaffChecklistController::class, 'show'])->name('show');
         });
     });
 

@@ -81,6 +81,12 @@ return [
             'default_roles' => ['staff', 'admin'],
         ],
         [
+            'key' => 'staff.checklist',
+            'name' => 'Checklist Rak Laptop',
+            'description' => 'Melakukan checklist rak laptop dan melihat riwayatnya',
+            'default_roles' => ['staff', 'admin'],
+        ],
+        [
             'key' => 'student.history',
             'name' => 'Riwayat Peminjaman',
             'description' => 'Melihat riwayat peminjaman siswa',
