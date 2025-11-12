@@ -231,11 +231,28 @@ class LaptopController extends Controller
         $validated = $request->validate([
             'laptop_ids' => ['required', 'array', 'min:1'],
             'laptop_ids.*' => ['integer', Rule::exists('laptops', 'id')],
-            'action' => ['required', Rule::in(['status', 'delete'])],
+            'action' => ['required', Rule::in(['status', 'delete', 'print_qr'])],
             'status' => ['nullable', Rule::in(['available', 'borrowed', 'maintenance', 'retired'])],
         ]);
 
-        $laptops = Laptop::with('borrowTransactions')->whereIn('id', $validated['laptop_ids'])->get();
+        $laptops = Laptop::with(['borrowTransactions', 'owner'])->whereIn('id', $validated['laptop_ids'])->get();
+
+        if ($validated['action'] === 'print_qr') {
+            $entries = $laptops->map(function (Laptop $laptop) {
+                return [
+                    'laptop' => $laptop,
+                    'qrSvg' => QrCode::format('svg')
+                        ->size(180)
+                        ->margin(0)
+                        ->generate($laptop->qr_code),
+                ];
+            });
+
+            return view('admin.laptops.qr-bulk', [
+                'entries' => $entries,
+                'generatedAt' => now(),
+            ]);
+        }
 
         if ($validated['action'] === 'delete') {
             $blocked = [];

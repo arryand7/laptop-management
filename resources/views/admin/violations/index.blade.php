@@ -6,17 +6,9 @@
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 class="text-xl font-semibold text-slate-800">Pelanggaran Peminjaman</h1>
         <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <a href="{{ route('admin.violations.create') }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+            <a href="{{ route('admin.violations.create') }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-black shadow hover:bg-blue-500">
                 <i class="fas fa-plus mr-2"></i> Tambah Data
             </a>
-            <form method="GET" class="flex items-center gap-2 text-sm text-slate-600">
-                <label for="status" class="text-xs uppercase tracking-wide">Status</label>
-                <select id="status" name="status" onchange="this.form.submit()" class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    <option value="active" @selected($status === 'active')>Aktif</option>
-                    <option value="resolved" @selected($status === 'resolved')>Selesai</option>
-                    <option value="all" @selected($status === 'all')>Semua</option>
-                </select>
-            </form>
         </div>
     </div>
 

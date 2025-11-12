@@ -1,27 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'QR Laptop')
+@section('title', 'Cetak QR Laptop Saya')
 
 @section('content')
     <div class="max-w-xl mx-auto space-y-6">
         <div class="flex items-center justify-between gap-3 no-print">
-            <a href="{{ route('admin.laptops.show', $laptop) }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
+            <a href="{{ route('student.laptops.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
             <button onclick="window.print()" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Cetak</button>
         </div>
 
         <div class="flex justify-center">
             <div class="qr-label">
-                <p class="qr-code"><strong>{{ $laptop->code }}</strong></p>
                 <div class="qr-meta">
+                    <p class="qr-code">{{ $laptop->code }}</p>
+                    <p class="qr-name">{{ \Illuminate\Support\Str::limit($laptop->name, 22) }}</p>
                     @if($laptop->owner)
-                        <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 19) }}</p>
+                        <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 22) }}</p>
                     @endif
                 </div>
                 <div class="qr-box">
                     {!! $qrSvg !!}
-                </div>
-                <div class="qr-meta">
-                    <p class="qr-name"><strong>{{ \Illuminate\Support\Str::limit($laptop->owner->student_number, 10) }}</strong></p>
                 </div>
             </div>
         </div>
@@ -31,11 +29,11 @@
 @push('styles')
     <style>
         .qr-label {
-            width: 3.5cm;
-            height: 4.7cm;
+            width: 4cm;
+            height: 4cm;
             border: 1px solid #cbd5f5;
             border-radius: 0.6rem;
-            padding: 0.1cm;
+            padding: 0.35cm;
             display: flex;
             flex-direction: column;
             justify-content: space-between;

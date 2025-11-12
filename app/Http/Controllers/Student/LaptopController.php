@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Laptop;
 use App\Models\LaptopUpdateRequest;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class LaptopController extends Controller
 {
@@ -94,6 +95,22 @@ class LaptopController extends Controller
         return redirect()
             ->route('student.laptops.index')
             ->with('status', 'Permintaan perubahan laptop telah dikirim dan menunggu konfirmasi admin.');
+    }
+
+    public function qr(Request $request, Laptop $laptop)
+    {
+        $student = $request->user();
+        $this->authorizeLaptop($laptop, $student->id);
+
+        $qrSvg = QrCode::format('svg')
+            ->size(180)
+            ->margin(0)
+            ->generate($laptop->qr_code);
+
+        return view('student.laptops.qr', [
+            'laptop' => $laptop,
+            'qrSvg' => $qrSvg,
+        ]);
     }
 
     private function authorizeLaptop(Laptop $laptop, int $studentId): void

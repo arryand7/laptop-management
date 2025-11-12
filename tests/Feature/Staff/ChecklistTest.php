@@ -71,6 +71,45 @@ class ChecklistTest extends TestCase
         $this->assertEquals($owner->id, Violation::first()->user_id);
     }
 
+    public function test_staff_can_edit_and_delete_checklist(): void
+    {
+        $staff = $this->makeStaffUser();
+        $owner = User::factory()->student()->create();
+
+        $foundLaptop = Laptop::factory()->create(['last_checked_at' => now()->subDay()]);
+        $missingLaptop = Laptop::factory()->create([
+            'owner_id' => $owner->id,
+            'is_missing' => false,
+        ]);
+
+        $this->actingAs($staff)->post(route('staff.checklist.store'), [
+            'found_laptops' => [$foundLaptop->id],
+            'note' => 'Checklist awal',
+        ]);
+
+        $session = ChecklistSession::first();
+        $this->assertNotNull($session);
+
+        $response = $this->actingAs($staff)->put(route('staff.checklist.update', $session), [
+            'found_laptops' => [$foundLaptop->id, $missingLaptop->id],
+            'note' => 'Revisi checklist',
+        ]);
+
+        $response->assertRedirect();
+
+        $session->refresh();
+        $this->assertEquals(2, $session->found_count);
+        $this->assertEquals(0, $session->missing_count);
+        $this->assertSame('Revisi checklist', $session->note);
+        $this->assertFalse(Laptop::find($missingLaptop->id)->is_missing);
+
+        $this->actingAs($staff)->delete(route('staff.checklist.destroy', $session))
+            ->assertRedirect(route('staff.checklist.history'));
+
+        $this->assertDatabaseMissing('checklist_sessions', ['id' => $session->id]);
+        $this->assertEquals(0, ChecklistDetail::count());
+    }
+
     private function makeStaffUser(): User
     {
         $staff = User::factory()->staff()->create();

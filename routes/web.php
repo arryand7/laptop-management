@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AppSettingController;
 use App\Http\Controllers\Admin\LaptopController as AdminLaptopController;
 use App\Http\Controllers\Admin\LaptopUpdateRequestController;
+use App\Http\Controllers\Admin\MobileTransactionController as AdminMobileTransactionController;
 use App\Http\Controllers\Admin\SanctionController as AdminSanctionController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -58,6 +59,12 @@ Route::middleware('auth')->group(function () {
             Route::get('laptop-requests/{laptopUpdateRequest}', [LaptopUpdateRequestController::class, 'show'])->name('laptop-requests.show');
             Route::patch('laptop-requests/{laptopUpdateRequest}/approve', [LaptopUpdateRequestController::class, 'approve'])->name('laptop-requests.approve');
             Route::patch('laptop-requests/{laptopUpdateRequest}/reject', [LaptopUpdateRequestController::class, 'reject'])->name('laptop-requests.reject');
+        });
+
+        Route::middleware('module:admin.transactions.mobile')->prefix('transactions/mobile')->name('transactions.mobile.')->group(function () {
+            Route::get('/', [AdminMobileTransactionController::class, 'index'])->name('index');
+            Route::post('preview', [AdminMobileTransactionController::class, 'preview'])->name('preview');
+            Route::post('confirm', [AdminMobileTransactionController::class, 'confirm'])->name('confirm');
         });
 
         Route::prefix('settings')->middleware('module:admin.settings')->name('settings.')->group(function () {
@@ -131,6 +138,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [StaffChecklistController::class, 'store'])->name('store');
             Route::get('history', [StaffChecklistController::class, 'history'])->name('history');
             Route::get('{session}', [StaffChecklistController::class, 'show'])->name('show');
+            Route::get('{session}/edit', [StaffChecklistController::class, 'edit'])->name('edit');
+            Route::put('{session}', [StaffChecklistController::class, 'update'])->name('update');
+            Route::delete('{session}', [StaffChecklistController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -145,6 +155,7 @@ Route::middleware('auth')->group(function () {
             Route::get('laptops', [StudentLaptopController::class, 'index'])->name('laptops.index');
             Route::get('laptops/{laptop}/edit', [StudentLaptopController::class, 'edit'])->name('laptops.edit');
             Route::post('laptops/{laptop}/requests', [StudentLaptopController::class, 'storeUpdateRequest'])->name('laptops.requests.store');
+            Route::get('laptops/{laptop}/qr', [StudentLaptopController::class, 'qr'])->name('laptops.qr');
         });
     });
 

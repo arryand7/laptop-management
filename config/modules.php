@@ -57,6 +57,12 @@ return [
             'default_roles' => ['admin'],
         ],
         [
+            'key' => 'admin.transactions.mobile',
+            'name' => 'Transaksi Mobile',
+            'description' => 'Akses transaksi pinjam/kembali versi mobile untuk admin',
+            'default_roles' => ['admin'],
+        ],
+        [
             'key' => 'chatbot',
             'name' => 'Chatbot Peminjaman',
             'description' => 'Perintah singkat pinjam/kembalikan melalui chatbot',

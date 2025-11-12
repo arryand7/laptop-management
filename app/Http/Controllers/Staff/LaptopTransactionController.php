@@ -28,7 +28,7 @@ class LaptopTransactionController extends Controller
             ->limit(5)
             ->get();
 
-        return view('staff.transactions.index', [
+        return view($this->viewName(), [
             'defaultDueAtIso' => $defaultDueAt->toIso8601String(),
             'defaultDueAtDisplay' => $defaultDueAt->translatedFormat('d M Y H:i'),
             'defaultDueLabel' => $defaultDueLabel,
@@ -338,5 +338,10 @@ class LaptopTransactionController extends Controller
             'status' => 'error',
             'message' => $message,
         ], $payload), $status);
+    }
+
+    protected function viewName(): string
+    {
+        return 'staff.transactions.index';
     }
 }

@@ -6,17 +6,9 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 class="text-xl font-semibold text-slate-800">Manajemen User</h1>
         <div class="flex flex-wrap items-center gap-2">
-            <form method="GET" class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
-                <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama/email"
-                    class="w-48 rounded border border-slate-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                <button type="submit" class="rounded bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-700">
-                    Cari
-                </button>
-            </form>
-            <a href="{{ route('admin.users.create') }}"
-                class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
-                <i class="fas fa-plus"></i> Tambah Data
-            </a>
+                <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-black shadow hover:bg-black-500">
+                    <i class="fas fa-plus"></i> Tambah Data
+                </a>
         </div>
     </div>
 

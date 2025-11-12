@@ -57,13 +57,18 @@
                             </div>
                         </dl>
 
-                        <div class="mt-4 flex items-center justify-between">
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                             <div class="text-xs text-slate-400">
                                 Terakhir diperbarui {{ $laptop->updated_at?->diffForHumans() ?? 'tidak diketahui' }}
                             </div>
-                            <a href="{{ route('student.laptops.edit', $laptop) }}" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-500">
-                                Ajukan perubahan
-                            </a>
+                            <div class="flex gap-2">
+                                <a href="{{ route('student.laptops.qr', $laptop) }}" class="inline-flex items-center rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50">
+                                    Cetak QR
+                                </a>
+                                <a href="{{ route('student.laptops.edit', $laptop) }}" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-500">
+                                    Ajukan perubahan
+                                </a>
+                            </div>
                         </div>
 
                         @if($latestRequest && $latestRequest->isRejected())

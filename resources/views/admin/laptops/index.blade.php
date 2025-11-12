@@ -47,6 +47,7 @@
                 <option value="">Pilih aksi</option>
                 <option value="status">Ubah Status</option>
                 <option value="delete">Hapus</option>
+                <option value="print_qr">Cetak QR</option>
             </select>
             <div id="bulk-status-wrapper">
                 <select name="status" class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" form="{{ $laptopsFormId }}">

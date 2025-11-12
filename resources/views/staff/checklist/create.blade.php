@@ -25,51 +25,60 @@
             </div>
         @endif
 
-        <form action="{{ route('staff.checklist.store') }}" method="POST" class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            @csrf
-
-            @php
-                $genderLabels = [
-                    'male' => 'Laki-laki',
-                    'female' => 'Perempuan',
-                ];
-            @endphp
-
-            <div class="grid gap-3 md:grid-cols-4">
+        <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <form method="GET" class="grid gap-3 md:grid-cols-4">
+                @php
+                    $genderLabels = ['male' => 'Laki-laki', 'female' => 'Perempuan'];
+                    $filters = $selectedFilters ?? ['classrooms' => [], 'gender' => null, 'status' => null];
+                @endphp
                 <div class="md:col-span-2">
-                    <label for="checklist-search" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Cari Laptop</label>
-                    <input type="search" id="checklist-search" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Cari kode, nama laptop, atau pemilik">
-                </div>
-                <div>
-                    <label for="checklist-status-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
-                    <select id="checklist-status-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                        <option value="">Semua Status</option>
-                        <option value="available">Available</option>
-                        <option value="borrowed">Borrowed</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="retired">Retired</option>
-                        <option value="missing">Dilaporkan hilang</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="checklist-class-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas</label>
-                    <select id="checklist-class-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                        <option value="">Semua Kelas</option>
+                    <label for="filter-classrooms" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Kelas (dapat pilih lebih dari satu)</label>
+                    <select id="filter-classrooms" name="classrooms[]" multiple class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                         @foreach($classrooms as $classroom)
-                            <option value="{{ $classroom }}">{{ $classroom }}</option>
+                            <option value="{{ $classroom }}" @selected(in_array($classroom, $filters['classrooms'], true))>{{ $classroom }}</option>
                         @endforeach
                     </select>
+                    <p class="mt-1 text-xs text-slate-400">Gunakan CTRL/CMD + klik untuk memilih lebih dari satu kelas.</p>
                 </div>
                 <div>
-                    <label for="checklist-gender-filter" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Jenis Kelamin</label>
-                    <select id="checklist-gender-filter" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <label for="filter-gender" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Jenis Kelamin</label>
+                    <select id="filter-gender" name="gender" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                         <option value="">Semua</option>
                         @foreach($genders as $gender)
-                            <option value="{{ $gender }}">{{ $genderLabels[$gender] ?? ucfirst($gender) }}</option>
+                            <option value="{{ $gender }}" @selected($filters['gender'] === $gender)>{{ $genderLabels[$gender] ?? ucfirst($gender) }}</option>
                         @endforeach
                     </select>
                 </div>
-            </div>
+                <div>
+                    <label for="filter-status" class="block text-xs font-semibold uppercase tracking-wide text-slate-500">Status Sistem</label>
+                    <select id="filter-status" name="status" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="">Semua Status</option>
+                        <option value="available" @selected($filters['status'] === 'available')>Available</option>
+                        <option value="borrowed" @selected($filters['status'] === 'borrowed')>Borrowed</option>
+                        <option value="maintenance" @selected($filters['status'] === 'maintenance')>Maintenance</option>
+                        <option value="retired" @selected($filters['status'] === 'retired')>Retired</option>
+                        <option value="missing" @selected($filters['status'] === 'missing')>Dilaporkan hilang</option>
+                    </select>
+                </div>
+                <div class="md:col-span-4 flex flex-wrap items-center gap-2">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">
+                        <i class="fas fa-filter"></i> Terapkan Filter
+                    </button>
+                    <a href="{{ route('staff.checklist.create') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                        <i class="fas fa-undo"></i> Reset
+                    </a>
+                    <span class="text-xs text-slate-500">Menampilkan {{ $totalCount }} laptop sesuai filter.</span>
+                </div>
+            </form>
+        </div>
+
+        <form action="{{ route('staff.checklist.store') }}" method="POST" class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            @csrf
+            @foreach($filters['classrooms'] as $classroom)
+                <input type="hidden" name="classrooms[]" value="{{ $classroom }}">
+            @endforeach
+            <input type="hidden" name="gender" value="{{ $filters['gender'] }}">
+            <input type="hidden" name="status" value="{{ $filters['status'] }}">
 
             @php
                 $selected = collect(old('found_laptops', $laptops->pluck('id')->all()))->map(fn ($id) => (int) $id);
@@ -77,7 +86,30 @@
                 $initialMissing = $laptops->filter(fn ($laptop) => $laptop->status !== 'borrowed' && !$selected->contains($laptop->id))->count();
             @endphp
 
-            <div class="overflow-x-auto">
+            @if($laptops->isEmpty())
+                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                    Tidak ada laptop yang cocok dengan filter. Silakan atur ulang filter atau pilih kelas/jenis kelamin lain sebelum melakukan checklist.
+                </div>
+            @else
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="text-sm text-slate-500">Menampilkan {{ $totalCount }} laptop pada checklist ini.</div>
+                <div class="w-full max-w-xs">
+                    <label for="checklist-search" class="sr-only">Cari laptop</label>
+                    <input type="search" id="checklist-search" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Cari kode, nama, atau pemilik...">
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
+                    <label for="checklist-length" class="text-[0.7rem]">Tampilkan</label>
+                    <select id="checklist-length" class="rounded-lg border border-slate-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="10">10 data</option>
+                        <option value="25" selected>25 data</option>
+                        <option value="50">50 data</option>
+                        <option value="100">100 data</option>
+                        <option value="-1">Semua data</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto mt-4">
                 <table id="checklist-table" class="table table-striped table-bordered table-sm datatable-default w-100">
                     <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         <tr>
@@ -159,6 +191,11 @@
                 </table>
             </div>
 
+            @php
+                $nonBorrowedCount = $laptops->where('status', 'borrowed')->count();
+                $initialFound = $laptops->count() - $nonBorrowedCount;
+            @endphp
+
             <div class="grid gap-4 md:grid-cols-4">
                 <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
                     <p class="text-xs uppercase tracking-wide text-slate-400">Total Laptop</p>
@@ -166,17 +203,18 @@
                 </div>
                 <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                     <p class="text-xs uppercase tracking-wide">Ditemukan</p>
-                    <p id="summary-found" class="mt-1 text-2xl font-semibold">{{ $initialFound }}</p>
+                    <p id="summary-found" class="mt-1 text-2xl font-semibold">{{ max($initialFound, 0) }}</p>
                 </div>
                 <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                     <p class="text-xs uppercase tracking-wide">Hilang</p>
-                    <p id="summary-missing" class="mt-1 text-2xl font-semibold">{{ $initialMissing }}</p>
+                    <p id="summary-missing" class="mt-1 text-2xl font-semibold">0</p>
                 </div>
                 <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
                     <p class="text-xs uppercase tracking-wide">Sedang Dipinjam</p>
                     <p id="summary-borrowed" class="mt-1 text-2xl font-semibold">{{ $initialBorrowedCount }}</p>
                 </div>
             </div>
+            @endif
 
             <div>
                 <label for="note" class="block text-sm font-semibold text-slate-600">Catatan (opsional)</label>
@@ -247,6 +285,7 @@
                         { searchable: false, targets: [0, 1] },
                     ],
                     pageLength: 25,
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'Semua']],
                 });
 
                 dataTable.on('draw', () => {
@@ -255,6 +294,7 @@
             }
 
             const searchInput = document.getElementById('checklist-search');
+            const lengthSelect = document.getElementById('checklist-length');
             const statusFilter = document.getElementById('checklist-status-filter');
             const classFilter = document.getElementById('checklist-class-filter');
             const genderFilter = document.getElementById('checklist-gender-filter');
@@ -266,9 +306,16 @@
                     });
                 }
 
-                if (statusFilter) {
-                    const statusMap = {
-                        available: 'Available',
+            if (lengthSelect && dataTable) {
+                lengthSelect.addEventListener('change', (event) => {
+                    const value = Number(event.target.value);
+                    dataTable.page.len(value).draw();
+                });
+            }
+
+            if (statusFilter && dataTable) {
+                const statusMap = {
+                    available: 'Available',
                         borrowed: 'Borrowed',
                         maintenance: 'Maintenance',
                         retired: 'Retired',
@@ -286,15 +333,15 @@
                     });
                 }
 
-                if (classFilter) {
-                    classFilter.addEventListener('change', (event) => {
+            if (classFilter && dataTable) {
+                classFilter.addEventListener('change', (event) => {
                         const value = event.target.value;
                         dataTable.column(5).search(value || '', true, false).draw();
                     });
                 }
 
-                if (genderFilter) {
-                    genderFilter.addEventListener('change', (event) => {
+            if (genderFilter && dataTable) {
+                genderFilter.addEventListener('change', (event) => {
                         const value = event.target.value;
                         dataTable.column(6).search(value || '', true, false).draw();
                     });

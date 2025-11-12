@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="space-y-6">
-        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between no-print">
             <div>
                 <h1 class="text-2xl font-semibold text-slate-800">Detail Checklist Laptop</h1>
                 <p class="mt-1 text-sm text-slate-500">Ringkasan checklist yang dilakukan oleh {{ $session->staff?->name ?? '—' }} pada {{ $session->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}.</p>
@@ -16,7 +16,19 @@
                 <a href="{{ route('staff.checklist.create') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50">
                     <i class="fas fa-plus-circle text-blue-500"></i> Checklist Baru
                 </a>
+                <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-slate-600 hover:bg-slate-50">
+                    <i class="fas fa-print text-blue-500"></i> Cetak
+                </button>
             </div>
+        </div>
+
+        <div class="print-only hidden rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center">
+            <h2 class="text-lg font-semibold text-slate-800">
+                Detail Checklist Laptop {{ $appSettings->site_name ?? config('app.name') }}
+            </h2>
+            <p class="text-sm text-slate-600">
+                pada {{ $session->completed_at?->translatedFormat('l, d F Y') ?? now()->translatedFormat('l, d F Y') }}
+            </p>
         </div>
 
         @if(session('status'))
@@ -30,7 +42,7 @@
             </div>
         @endif
 
-        <div class="grid gap-4 md:grid-cols-4">
+        <div class="grid gap-4 md:grid-cols-4 print-scale">
             <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
                 <p class="text-xs uppercase tracking-wide text-slate-400">Total Laptop</p>
                 <p class="mt-1 text-2xl font-semibold text-slate-800">{{ $session->total_laptops }}</p>
@@ -50,7 +62,7 @@
         </div>
 
         @if($session->note)
-            <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+            <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm print-scale">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Catatan Petugas</p>
                 <p class="mt-1">{{ $session->note }}</p>
             </div>
@@ -59,7 +71,7 @@
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 class="text-base font-semibold text-slate-700">Rincian Laptop</h2>
 
-            <div class="mt-4 grid gap-6 lg:grid-cols-3">
+            <div class="details-grid mt-4 grid gap-6 lg:grid-cols-3">
                 <div>
                     <h3 class="text-sm font-semibold text-emerald-600">Ditemukan ({{ $foundDetails->count() }})</h3>
                     <div class="mt-2 space-y-2 text-sm text-slate-600">
@@ -108,3 +120,34 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: #ffffff;
+                font-size: 12px;
+            }
+            .print-scale {
+                font-size: 0.75em;
+            }
+            .details-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            .details-grid .rounded-lg {
+                break-inside: avoid;
+            }
+            .rounded-3xl {
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+@endpush

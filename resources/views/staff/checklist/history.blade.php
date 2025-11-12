@@ -43,9 +43,21 @@
                                 <td class="px-3 py-3 text-center text-sm font-semibold text-amber-600">{{ $session->borrowed_count }}</td>
                                 <td class="px-3 py-3 text-xs text-slate-500">{{ $session->note ? \Illuminate\Support\Str::limit($session->note, 60) : '—' }}</td>
                                 <td class="px-3 py-3 text-right">
-                                    <a href="{{ route('staff.checklist.show', $session) }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold uppercase text-slate-600 hover:bg-slate-50">
-                                        <i class="fas fa-eye text-blue-500"></i> Detail
-                                    </a>
+                                    <div class="flex flex-wrap justify-end gap-2">
+                                        <a href="{{ route('staff.checklist.show', $session) }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold uppercase text-slate-600 hover:bg-slate-50">
+                                            <i class="fas fa-eye text-blue-500"></i> Detail
+                                        </a>
+                                        <a href="{{ route('staff.checklist.edit', $session) }}" class="inline-flex items-center gap-2 rounded-lg border border-amber-200 px-3 py-2 text-xs font-semibold uppercase text-amber-600 hover:bg-amber-50">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form action="{{ route('staff.checklist.destroy', $session) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus checklist ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold uppercase text-rose-600 hover:bg-rose-50">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

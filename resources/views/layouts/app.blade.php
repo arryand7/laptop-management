@@ -296,6 +296,14 @@
                                 </a>
                             </li>
                         @endif
+                        @if($user?->hasModule('admin.transactions.mobile'))
+                            <li class="nav-item">
+                                <a href="{{ route('admin.transactions.mobile.index') }}" class="nav-link @if(request()->routeIs('admin.transactions.mobile.*')) active @endif">
+                                    <i class="nav-icon fas fa-mobile-alt"></i>
+                                    <p>Transaksi Mobile</p>
+                                </a>
+                            </li>
+                        @endif
                         @if($user?->hasModule('staff.checklist'))
                             <li class="nav-item">
                                 <a href="{{ route('staff.checklist.create') }}" class="nav-link @if(request()->routeIs('staff.checklist.*')) active @endif">
@@ -1007,12 +1015,12 @@
             return;
         }
 
-        if ($actionSelect.val() === 'delete') {
-            $target.addClass('d-none');
-            $target.find('select, input').prop('disabled', true);
-        } else {
+        if ($actionSelect.val() === 'status') {
             $target.removeClass('d-none');
             $target.find('select, input').prop('disabled', false);
+        } else {
+            $target.addClass('d-none');
+            $target.find('select, input').prop('disabled', true);
         }
     };
 
