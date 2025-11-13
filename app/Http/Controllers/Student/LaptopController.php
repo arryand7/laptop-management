@@ -97,6 +97,42 @@ class LaptopController extends Controller
             ->with('status', 'Permintaan perubahan laptop telah dikirim dan menunggu konfirmasi admin.');
     }
 
+    public function create()
+    {
+        return view('student.laptops.create');
+    }
+
+    public function store(Request $request)
+    {
+        $student = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'brand' => ['nullable', 'string', 'max:100'],
+            'model' => ['nullable', 'string', 'max:100'],
+            'serial_number' => ['nullable', 'string', 'max:100'],
+            'notes' => ['nullable', 'string'],
+            'spec_cpu' => ['nullable', 'string', 'max:100'],
+            'spec_ram' => ['nullable', 'string', 'max:100'],
+            'spec_storage' => ['nullable', 'string', 'max:100'],
+            'spec_os' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $proposedPayload = $this->buildPayloadFromInput($validated);
+
+        LaptopUpdateRequest::create([
+            'laptop_id' => null,
+            'student_id' => $student->id,
+            'original_data' => null,
+            'proposed_data' => $proposedPayload,
+            'status' => LaptopUpdateRequest::STATUS_PENDING,
+        ]);
+
+        return redirect()
+            ->route('student.laptops.index')
+            ->with('status', 'Permintaan penambahan laptop dikirim. Menunggu verifikasi admin.');
+    }
+
     public function qr(Request $request, Laptop $laptop)
     {
         $student = $request->user();

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('laptop_update_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('laptop_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('laptop_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
-            $table->json('original_data');
+            $table->json('original_data')->nullable();
             $table->json('proposed_data');
             $table->string('status')->default('pending');
             $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();

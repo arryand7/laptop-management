@@ -24,7 +24,7 @@
                     <input type="text" id="model" name="model" value="{{ old('model') }}" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-600" for="serial_number">Serial Number</label>
+                    <label class="block text-sm font-medium text-slate-600" for="serial_number">Kode Laptop (Almari-Lantai-Nomor)</label>
                     <input type="text" id="serial_number" name="serial_number" value="{{ old('serial_number') }}" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>

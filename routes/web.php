@@ -153,6 +153,8 @@ Route::middleware('auth')->group(function () {
         Route::get('history', StudentHistoryController::class)->name('history')->middleware('module:student.history');
         Route::middleware('module:student.laptops')->group(function () {
             Route::get('laptops', [StudentLaptopController::class, 'index'])->name('laptops.index');
+            Route::get('laptops/create', [StudentLaptopController::class, 'create'])->name('laptops.create');
+            Route::post('laptops', [StudentLaptopController::class, 'store'])->name('laptops.store');
             Route::get('laptops/{laptop}/edit', [StudentLaptopController::class, 'edit'])->name('laptops.edit');
             Route::post('laptops/{laptop}/requests', [StudentLaptopController::class, 'storeUpdateRequest'])->name('laptops.requests.store');
             Route::get('laptops/{laptop}/qr', [StudentLaptopController::class, 'qr'])->name('laptops.qr');

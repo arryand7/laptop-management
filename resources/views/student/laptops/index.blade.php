@@ -7,6 +7,11 @@
         <div>
             <h1 class="text-xl font-semibold text-slate-800">Laptop Milik Saya</h1>
             <p class="text-sm text-slate-500">Ajukan perubahan data perangkat Anda jika terdapat informasi yang perlu diperbarui.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+                <a href="{{ route('student.laptops.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-black shadow hover:bg-blue-500">
+                    <i class="fas fa-plus-circle"></i> Tambah Laptop Baru
+                </a>
+            </div>
         </div>
 
         @if($laptops->isEmpty())
@@ -65,7 +70,7 @@
                                 <a href="{{ route('student.laptops.qr', $laptop) }}" class="inline-flex items-center rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50">
                                     Cetak QR
                                 </a>
-                                <a href="{{ route('student.laptops.edit', $laptop) }}" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-500">
+                                <a href="{{ route('student.laptops.edit', $laptop) }}" class="inline-flex items-center rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50">
                                     Ajukan perubahan
                                 </a>
                             </div>

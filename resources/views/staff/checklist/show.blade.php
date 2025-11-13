@@ -110,6 +110,9 @@
                             <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                                 <div class="font-semibold text-amber-700">{{ $detail->laptop->code }}</div>
                                 <div class="text-xs text-amber-500">{{ $detail->laptop->name }}</div>
+                                @if($detail->laptop->owner)
+                                    <div class="text-xs text-rose-500">Pemilik: {{ $detail->laptop->owner->name }}</div>
+                                @endif
                             </div>
                         @empty
                             <p class="text-xs text-slate-400">Tidak ada laptop yang dipinjam.</p>
