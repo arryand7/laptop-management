@@ -28,6 +28,16 @@
                 </div>
                 <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Masuk</button>
             </form>
+
+            <div class="my-5 flex items-center gap-3 text-xs text-slate-400">
+                <span class="h-px flex-1 bg-slate-200"></span>
+                <span>atau</span>
+                <span class="h-px flex-1 bg-slate-200"></span>
+            </div>
+
+            <a href="{{ route('sso.login') }}" class="w-full inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                Masuk dengan Sabira Connect
+            </a>
         </div>
     </div>
 @endsection

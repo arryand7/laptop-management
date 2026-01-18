@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\SanctionController as AdminSanctionController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ViolationController as AdminViolationController;
+use App\Http\Controllers\Admin\SsoSyncController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ChatbotController;
@@ -28,6 +30,8 @@ Route::get('/', LandingController::class)->name('landing');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::get('/sso/login', [SsoController::class, 'redirect'])->name('sso.login');
+    Route::get('/sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
 });
 
 Route::middleware('auth')->group(function () {
@@ -81,6 +85,9 @@ Route::middleware('auth')->group(function () {
             Route::put('ai', [AppSettingController::class, 'updateAi'])->name('ai.update');
             Route::get('safe-exam-browser', [AppSettingController::class, 'safeExamBrowser'])->name('safe-exam-browser');
             Route::put('safe-exam-browser', [AppSettingController::class, 'updateSafeExamBrowser'])->name('safe-exam-browser.update');
+
+            Route::get('sso-sync', [SsoSyncController::class, 'index'])->name('sso-sync');
+            Route::post('sso-sync', [SsoSyncController::class, 'sync'])->name('sso-sync.run');
 
             Route::get('/', function () {
                 return redirect()->route('admin.settings.application');

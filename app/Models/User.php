@@ -33,6 +33,8 @@ class User extends Authenticatable
         'violations_count',
         'sanction_ends_at',
         'is_active',
+        'sso_sub',
+        'sso_synced_at',
     ];
 
     /**
@@ -57,6 +59,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'sanction_ends_at' => 'datetime',
             'is_active' => 'boolean',
+            'sso_synced_at' => 'datetime',
         ];
     }
 
@@ -72,6 +75,11 @@ class User extends Authenticatable
     public function borrowTransactionsAsStudent()
     {
         return $this->hasMany(BorrowTransaction::class, 'student_id');
+    }
+
+    public function latestBorrowTransaction()
+    {
+        return $this->hasOne(BorrowTransaction::class, 'student_id')->latestOfMany('borrowed_at');
     }
 
     public function borrowTransactionsHandled()

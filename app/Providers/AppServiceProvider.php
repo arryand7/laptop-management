@@ -26,9 +26,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $appSettings = AppSettingManager::current();
+        $timezone = $appSettings->timezone ?: config('app.timezone', 'UTC');
+        config(['app.timezone' => $timezone]);
+        date_default_timezone_set($timezone);
+
         Carbon::setLocale(config('app.locale', 'en'));
 
-        View::share('appSettings', AppSettingManager::current());
+        View::share('appSettings', $appSettings);
 
         Module::syncFromConfig();
 

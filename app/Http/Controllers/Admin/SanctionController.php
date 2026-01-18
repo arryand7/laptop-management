@@ -15,7 +15,7 @@ class SanctionController extends Controller
     {
         $status = $request->query('status', 'active');
 
-        $sanctions = Sanction::with('student')
+        $sanctions = Sanction::with(['student.latestBorrowTransaction.laptop'])
             ->when($status !== 'all', fn ($query) => $query->where('status', $status))
             ->orderByDesc('starts_at')
             ->get();

@@ -21,6 +21,7 @@ class AppSettingController extends Controller
     {
         return view('admin.settings.application', [
             'setting' => $this->setting(),
+            'timezones' => \DateTimeZone::listIdentifiers(),
         ]);
     }
 
@@ -29,7 +30,43 @@ class AppSettingController extends Controller
         $setting = $this->setting();
 
         DB::transaction(function () use ($setting, $request): void {
-            $setting->fill($request->validated());
+            $validated = $request->validated();
+
+            if (array_key_exists('timezone', $validated)) {
+                $timezone = trim((string) ($validated['timezone'] ?? ''));
+                $validated['timezone'] = $timezone !== '' ? $timezone : null;
+            }
+
+            if (array_key_exists('sso_base_url', $validated)) {
+                $baseUrl = trim((string) ($validated['sso_base_url'] ?? ''));
+                $validated['sso_base_url'] = $baseUrl !== '' ? rtrim($baseUrl, '/') : null;
+            }
+
+            if (array_key_exists('sso_client_id', $validated)) {
+                $clientId = trim((string) ($validated['sso_client_id'] ?? ''));
+                $validated['sso_client_id'] = $clientId !== '' ? $clientId : null;
+            }
+
+            if (array_key_exists('sso_redirect_uri', $validated)) {
+                $redirectUri = trim((string) ($validated['sso_redirect_uri'] ?? ''));
+                $validated['sso_redirect_uri'] = $redirectUri !== '' ? $redirectUri : null;
+            }
+
+            if (array_key_exists('sso_scopes', $validated)) {
+                $scopes = trim((string) ($validated['sso_scopes'] ?? ''));
+                $validated['sso_scopes'] = $scopes !== '' ? $scopes : null;
+            }
+
+            if (array_key_exists('sso_client_secret', $validated)) {
+                $secret = trim((string) ($validated['sso_client_secret'] ?? ''));
+                if ($secret === '') {
+                    unset($validated['sso_client_secret']);
+                } else {
+                    $validated['sso_client_secret'] = $secret;
+                }
+            }
+
+            $setting->fill($validated);
 
             if ($request->hasFile('logo')) {
                 if ($setting->logo_path && Storage::disk('public')->exists($setting->logo_path)) {

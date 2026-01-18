@@ -17,7 +17,8 @@
             <table class="table table-striped table-bordered table-sm datatable-default w-100">
                 <thead class="text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                    <th class="px-4 py-3">Siswa</th>
+                    <th class="px-4 py-3">Peminjam</th>
+                    <th class="px-4 py-3">Laptop</th>
                     <th class="px-4 py-3">Periode</th>
                     <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3">Alasan</th>
@@ -27,9 +28,24 @@
                 <tbody class="text-slate-600">
                 @foreach($sanctions as $sanction)
                     <tr>
+                        @php
+                            $latestBorrow = $sanction->student?->latestBorrowTransaction;
+                            $laptop = $latestBorrow?->laptop;
+                        @endphp
                         <td class="px-4 py-3">
-                            <p class="font-medium text-slate-800">{{ $sanction->student?->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $sanction->student?->student_number }} · {{ $sanction->student?->classroom }}</p>
+                            <p class="font-medium text-slate-800">{{ $sanction->student?->name ?? '-' }}</p>
+                            <p class="text-xs text-slate-500">{{ $sanction->student?->student_number ?? '-' }} · {{ $sanction->student?->classroom ?? '-' }}</p>
+                        </td>
+                        <td class="px-4 py-3">
+                            @if($laptop)
+                                <p class="text-sm font-semibold text-slate-800">{{ $laptop->code }}</p>
+                                <p class="text-xs text-slate-500">{{ $laptop->name }}</p>
+                                @if($latestBorrow?->transaction_code)
+                                    <p class="text-[11px] font-mono text-slate-400">{{ $latestBorrow->transaction_code }}</p>
+                                @endif
+                            @else
+                                <p class="text-xs text-slate-400">Belum ada transaksi</p>
+                            @endif
                         </td>
                         <td class="px-4 py-3 text-sm text-slate-600">
                             {{ $sanction->starts_at?->translatedFormat('d M Y') }} &rarr; {{ $sanction->ends_at?->translatedFormat('d M Y') }}

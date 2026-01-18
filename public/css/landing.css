@@ -1,11 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap");
 
 :root {
-    --primary: #2563eb;
-    --secondary: #1f2937;
+    --primary: #0ea5e9;
+    --primary-dark: #0284c7;
+    --primary-soft: rgba(14, 165, 233, 0.12);
+    --secondary: #0f172a;
     --muted: #64748b;
-    --bg-light: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.85);
+    --bg-light: #f4f8ff;
+    --card-bg: rgba(255, 255, 255, 0.92);
+    --border: rgba(148, 163, 184, 0.2);
 }
 
 *,
@@ -16,8 +19,9 @@
 
 body {
     margin: 0;
-    font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(180deg, var(--bg-light) 0%, #ffffff 40%, #f1f5f9 100%);
+    font-family: "Sora", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 45%),
+        linear-gradient(180deg, var(--bg-light) 0%, #ffffff 45%, #eef4ff 100%);
     color: var(--secondary);
 }
 
@@ -47,15 +51,15 @@ a {
     border-radius: 999px;
     font-weight: 600;
     color: white;
-    background: var(--primary);
-    border: 1px solid rgba(37, 99, 235, 0.12);
-    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.18);
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
+    border: 1px solid rgba(14, 165, 233, 0.12);
+    box-shadow: 0 12px 28px rgba(14, 165, 233, 0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .landing-login:hover {
     transform: translateY(-1px);
-    box-shadow: 0 16px 28px rgba(37, 99, 235, 0.22);
+    box-shadow: 0 16px 28px rgba(14, 165, 233, 0.28);
 }
 
 .landing-branding {
@@ -69,7 +73,7 @@ a {
     height: 48px;
     object-fit: contain;
     border-radius: 16px;
-    box-shadow: 0 16px 26px rgba(30, 41, 59, 0.20);
+    box-shadow: 0 16px 26px rgba(15, 23, 42, 0.2);
 }
 
 .landing-branding span {
@@ -112,7 +116,7 @@ a {
     padding: 1.75rem;
     background: var(--card-bg);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+    border: 1px solid var(--border);
     box-shadow: 0 24px 40px rgba(15, 23, 42, 0.12);
     text-align: left;
 }
@@ -158,7 +162,7 @@ a {
 .landing-detail {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px dashed rgba(148, 163, 184, 0.4);
+    border-top: 1px dashed rgba(148, 163, 184, 0.45);
     display: none;
 }
 
@@ -204,7 +208,7 @@ a {
     background: white;
     border-radius: 22px;
     padding: 1.8rem;
-    border: 1px solid rgba(226, 232, 240, 0.75);
+    border: 1px solid var(--border);
     box-shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
 }
 
@@ -224,6 +228,11 @@ a {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+}
+
+.landing-list-item.accent {
+    background: rgba(14, 165, 233, 0.08);
+    border-color: rgba(14, 165, 233, 0.18);
 }
 
 .landing-list-item strong {
@@ -250,8 +259,8 @@ a {
     align-items: center;
     border-radius: 18px;
     padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.10), rgba(244, 114, 182, 0.12));
-    border: 1px solid rgba(244, 114, 182, 0.18);
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(125, 211, 252, 0.16));
+    border: 1px solid rgba(125, 211, 252, 0.24);
 }
 
 .landing-violator-item .meta {
@@ -263,8 +272,8 @@ a {
 .landing-violator-item .badge {
     padding: 0.3rem 0.85rem;
     border-radius: 999px;
-    background: rgba(244, 114, 182, 0.25);
-    color: #be185d;
+    background: rgba(14, 165, 233, 0.22);
+    color: #075985;
     font-weight: 600;
     font-size: 0.82rem;
 }
@@ -304,12 +313,31 @@ a {
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
     .landing-header {
-        flex-direction: row-reverse;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
+    .landing-hero {
+        text-align: left;
+    }
+}
+
+@media (max-width: 640px) {
     .landing-branding span {
         display: none;
+    }
+
+    .landing-login {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .landing-violator-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
     }
 }

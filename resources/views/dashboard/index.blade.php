@@ -314,8 +314,8 @@
                             datasets: [{
                                 label: 'Peminjaman',
                                 data: @json($dailyValues),
-                                borderColor: '#2563eb',
-                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                borderColor: '#0ea5e9',
+                                backgroundColor: 'rgba(14, 165, 233, 0.12)',
                                 tension: 0.4,
                                 fill: true,
                                 borderWidth: 2,

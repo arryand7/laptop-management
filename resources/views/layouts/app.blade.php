@@ -20,6 +20,9 @@
     <title>@yield('title', $defaultSiteName) · {{ $defaultSiteName }}</title>
     <link rel="icon" href="{{ asset('images/logo-sabira.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('images/logo-sabira.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
@@ -28,55 +31,6 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
-    <style>
-        .nav-sidebar .nav-link {
-            border-radius: 0.6rem;
-            margin-bottom: 0.35rem;
-            transition: all 0.2s ease;
-        }
-        .nav-sidebar .nav-link.active {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
-        }
-        .nav-sidebar .nav-link:hover {
-            background-color: rgba(59, 130, 246, 0.18);
-        }
-        .lookup-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            margin-top: 0.25rem;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
-            max-height: 14rem;
-            overflow-y: auto;
-        }
-        .lookup-suggestions button {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            text-align: left;
-            background: transparent;
-            border: none;
-            font-size: 0.85rem;
-            transition: background 0.15s ease;
-        }
-        .lookup-suggestions button:hover {
-            background-color: rgba(59, 130, 246, 0.08);
-        }
-        .lookup-suggestions button.active,
-        .lookup-suggestions button:focus {
-            background-color: rgba(59, 130, 246, 0.12);
-            outline: none;
-        }
-        .lookup-suggestions .meta {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-    </style>
 </head>
 <body class="sidebar-mini layout-fixed layout-footer-fixed layout-navbar-fixed">
 @if(auth()->check())
@@ -172,6 +126,17 @@
                             || request()->routeIs('admin.students.*')
                             || request()->routeIs('admin.laptops.*')
                             || request()->routeIs('admin.laptop-requests.*');
+                        $monitoringMenuOpen = request()->routeIs('admin.violations.*')
+                            || request()->routeIs('admin.sanctions.*')
+                            || request()->routeIs('admin.reports.*');
+                        $transactionsMenuOpen = request()->routeIs('staff.transactions.*')
+                            || request()->routeIs('admin.transactions.mobile.*')
+                            || request()->routeIs('staff.borrow.*')
+                            || request()->routeIs('staff.return.*');
+                        $operationsMenuOpen = request()->routeIs('staff.checklist.*')
+                            || request()->routeIs('chatbot.*');
+                        $studentMenuOpen = request()->routeIs('student.laptops.*')
+                            || request()->routeIs('student.history');
                     @endphp
 
                     @if($hasSystemSettings || $hasMasterData)
@@ -262,96 +227,156 @@
                             </li>
                         @endif
 
-                        @if($user?->hasModule('admin.violations'))
-                            <li class="nav-item">
-                                <a href="{{ route('admin.violations.index') }}" class="nav-link @if(request()->routeIs('admin.violations.*')) active @endif">
-                                    <i class="nav-icon fas fa-exclamation-circle"></i>
-                                    <p>Pelanggaran</p>
+                        @php
+                            $hasMonitoring = $user?->hasModule('admin.violations')
+                                || $user?->hasModule('admin.sanctions')
+                                || $user?->hasModule('admin.reports');
+                        @endphp
+                        @if($hasMonitoring)
+                            <li class="nav-item has-treeview {{ $monitoringMenuOpen ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link {{ $monitoringMenuOpen ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-chart-line"></i>
+                                    <p>Monitoring<i class="fas fa-angle-left right"></i></p>
                                 </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('admin.sanctions'))
-                            <li class="nav-item">
-                                <a href="{{ route('admin.sanctions.index') }}" class="nav-link @if(request()->routeIs('admin.sanctions.*')) active @endif">
-                                    <i class="nav-icon fas fa-ban"></i>
-                                    <p>Sanksi</p>
-                                </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('admin.reports'))
-                            <li class="nav-item">
-                                <a href="{{ route('admin.reports.index') }}" class="nav-link @if(request()->routeIs('admin.reports.*')) active @endif">
-                                    <i class="nav-icon fas fa-file-alt"></i>
-                                    <p>Laporan</p>
-                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($user?->hasModule('admin.violations'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.violations.index') }}" class="nav-link @if(request()->routeIs('admin.violations.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Pelanggaran</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('admin.sanctions'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.sanctions.index') }}" class="nav-link @if(request()->routeIs('admin.sanctions.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Sanksi</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('admin.reports'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.reports.index') }}" class="nav-link @if(request()->routeIs('admin.reports.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Laporan</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endif
                     @endif
                     @if(in_array($role, ['staff','admin']))
-                        @if($user?->hasModule('staff.transactions'))
-                            <li class="nav-item">
-                                <a href="{{ route('staff.transactions.index') }}" class="nav-link @if(request()->routeIs('staff.transactions.*')) active @endif">
+                        @php
+                            $hasTransactions = $user?->hasModule('staff.transactions')
+                                || $user?->hasModule('admin.transactions.mobile')
+                                || $user?->hasModule('staff.borrow')
+                                || $user?->hasModule('staff.return');
+                        @endphp
+                        @if($hasTransactions)
+                            <li class="nav-item has-treeview {{ $transactionsMenuOpen ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link {{ $transactionsMenuOpen ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-exchange-alt"></i>
-                                    <p>Transaksi Laptop</p>
+                                    <p>Transaksi<i class="fas fa-angle-left right"></i></p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    @if($user?->hasModule('staff.transactions'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('staff.transactions.index') }}" class="nav-link @if(request()->routeIs('staff.transactions.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transaksi Laptop</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('admin.transactions.mobile'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.transactions.mobile.index') }}" class="nav-link @if(request()->routeIs('admin.transactions.mobile.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Transaksi Mobile</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('staff.borrow'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('staff.borrow.create') }}" class="nav-link @if(request()->routeIs('staff.borrow.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Form Peminjaman</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('staff.return'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('staff.return.create') }}" class="nav-link @if(request()->routeIs('staff.return.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Form Pengembalian</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endif
-                        @if($user?->hasModule('admin.transactions.mobile'))
-                            <li class="nav-item">
-                                <a href="{{ route('admin.transactions.mobile.index') }}" class="nav-link @if(request()->routeIs('admin.transactions.mobile.*')) active @endif">
-                                    <i class="nav-icon fas fa-mobile-alt"></i>
-                                    <p>Transaksi Mobile</p>
+
+                        @php
+                            $hasOperations = $user?->hasModule('staff.checklist')
+                                || $user?->hasModule('chatbot');
+                        @endphp
+                        @if($hasOperations)
+                            <li class="nav-item has-treeview {{ $operationsMenuOpen ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link {{ $operationsMenuOpen ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-toolbox"></i>
+                                    <p>Operasional<i class="fas fa-angle-left right"></i></p>
                                 </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('staff.checklist'))
-                            <li class="nav-item">
-                                <a href="{{ route('staff.checklist.create') }}" class="nav-link @if(request()->routeIs('staff.checklist.*')) active @endif">
-                                    <i class="nav-icon fas fa-clipboard-check"></i>
-                                    <p>Checklist Laptop</p>
-                                </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('staff.borrow'))
-                            <li class="nav-item">
-                                <a href="{{ route('staff.borrow.create') }}" class="nav-link @if(request()->routeIs('staff.borrow.*')) active @endif">
-                                    <i class="nav-icon fas fa-sign-out-alt"></i>
-                                    <p>Form Peminjaman</p>
-                                </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('staff.return'))
-                            <li class="nav-item">
-                                <a href="{{ route('staff.return.create') }}" class="nav-link @if(request()->routeIs('staff.return.*')) active @endif">
-                                    <i class="nav-icon fas fa-sign-in-alt"></i>
-                                    <p>Form Pengembalian</p>
-                                </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('chatbot'))
-                            <li class="nav-item">
-                                <a href="{{ route('chatbot.index') }}" class="nav-link @if(request()->routeIs('chatbot.*')) active @endif">
-                                    <i class="nav-icon fas fa-robot"></i>
-                                    <p>Chatbot Peminjaman</p>
-                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($user?->hasModule('staff.checklist'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('staff.checklist.create') }}" class="nav-link @if(request()->routeIs('staff.checklist.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Checklist Laptop</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('chatbot'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('chatbot.index') }}" class="nav-link @if(request()->routeIs('chatbot.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Chatbot Peminjaman</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endif
                     @endif
                     @if($role === 'student')
-                        @if($user?->hasModule('student.laptops'))
-                            <li class="nav-item">
-                                <a href="{{ route('student.laptops.index') }}" class="nav-link @if(request()->routeIs('student.laptops.*')) active @endif">
-                                    <i class="nav-icon fas fa-laptop-code"></i>
-                                    <p>Laptop Saya</p>
+                        @php
+                            $hasStudentMenu = $user?->hasModule('student.laptops')
+                                || $user?->hasModule('student.history');
+                        @endphp
+                        @if($hasStudentMenu)
+                            <li class="nav-item has-treeview {{ $studentMenuOpen ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link {{ $studentMenuOpen ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-user-graduate"></i>
+                                    <p>Akses Siswa<i class="fas fa-angle-left right"></i></p>
                                 </a>
-                            </li>
-                        @endif
-                        @if($user?->hasModule('student.history'))
-                            <li class="nav-item">
-                                <a href="{{ route('student.history') }}" class="nav-link @if(request()->routeIs('student.history')) active @endif">
-                                    <i class="nav-icon fas fa-history"></i>
-                                    <p>Riwayat Peminjaman</p>
-                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($user?->hasModule('student.laptops'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('student.laptops.index') }}" class="nav-link @if(request()->routeIs('student.laptops.*')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Laptop Saya</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($user?->hasModule('student.history'))
+                                        <li class="nav-item">
+                                            <a href="{{ route('student.history') }}" class="nav-link @if(request()->routeIs('student.history')) active @endif">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Riwayat Peminjaman</p>
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endif
                     @endif

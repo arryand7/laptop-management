@@ -32,11 +32,11 @@
                     <div class="landing-highlight-number">{{ number_format($totalLaptops) }}</div>
                     <p class="landing-highlight-meta">Seluruh perangkat yang tercatat di sistem sekolah.</p>
                     <ul class="landing-list">
-                        <li class="landing-list-item" style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.12);">
+                        <li class="landing-list-item accent">
                             <strong>Laptop Putra</strong>
                             <span>{{ $laptopGenderCounts['male'] ?? 0 }} unit</span>
                         </li>
-                        <li class="landing-list-item" style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.12);">
+                        <li class="landing-list-item accent">
                             <strong>Laptop Putri</strong>
                             <span>{{ $laptopGenderCounts['female'] ?? 0 }} unit</span>
                         </li>
@@ -48,7 +48,7 @@
                     <p class="landing-highlight-meta">Distribusi unit berdasarkan kondisi terbaru.</p>
                     <ul class="landing-list">
                         @foreach($statusSummary as $summary)
-                            <li class="landing-list-item" style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.12);">
+                            <li class="landing-list-item accent">
                                 <strong>{{ ucfirst($summary['status'] ?? 'unknown') }}</strong>
                                 <span>{{ $summary['total'] }} unit</span>
                             </li>
@@ -213,8 +213,8 @@
                     labels: borrowSeries.map(item => item.label),
                     datasets: [{
                         data: borrowSeries.map(item => item.value),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.18)',
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.18)',
                         fill: true,
                         tension: 0.35,
                         pointRadius: 0,

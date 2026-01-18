@@ -17,7 +17,8 @@
             <table class="table table-striped table-bordered table-sm datatable-default w-100">
                 <thead class="text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                    <th class="px-4 py-3">Siswa</th>
+                    <th class="px-4 py-3">Peminjam</th>
+                    <th class="px-4 py-3">Laptop</th>
                     <th class="px-4 py-3">Transaksi</th>
                     <th class="px-4 py-3">Tanggal</th>
                     <th class="px-4 py-3">Catatan</th>
@@ -28,11 +29,23 @@
                 <tbody class="text-slate-600">
                 @foreach($violations as $violation)
                     <tr>
+                        @php
+                            $borrower = $violation->transaction?->student ?? $violation->student;
+                            $laptop = $violation->transaction?->laptop;
+                        @endphp
                         <td class="px-4 py-3">
-                            <p class="font-medium text-slate-800">{{ $violation->student?->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $violation->student?->student_number }} · {{ $violation->student?->classroom }}</p>
+                            <p class="font-medium text-slate-800">{{ $borrower?->name ?? '-' }}</p>
+                            <p class="text-xs text-slate-500">{{ $borrower?->student_number ?? '-' }}</p>
                         </td>
-                        <td class="px-4 py-3 text-xs font-mono text-slate-500">{{ $violation->transaction?->transaction_code }}</td>
+                        <td class="px-4 py-3">
+                            @if($laptop)
+                                <p class="text-sm font-semibold text-slate-800">{{ $laptop->code }}</p>
+                                <p class="text-xs text-slate-500">{{ $laptop->name }}</p>
+                            @else
+                                <p class="text-xs text-slate-400">Tidak terkait transaksi</p>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-xs font-mono text-slate-500">{{ $violation->transaction?->transaction_code ?? '-' }}</td>
                         <td class="px-4 py-3">{{ $violation->occurred_at?->translatedFormat('d M Y H:i') }}</td>
                         <td class="px-4 py-3">{{ $violation->notes }}</td>
                         <td class="px-4 py-3">{{ $violation->points }}</td>

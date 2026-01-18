@@ -21,7 +21,7 @@ class ViolationController extends Controller
     {
         $status = $request->query('status', 'active');
 
-        $violations = Violation::with(['student', 'transaction.laptop'])
+        $violations = Violation::with(['student', 'transaction.student', 'transaction.laptop'])
             ->when($status !== 'all', fn ($query) => $query->where('status', $status))
             ->orderByDesc('occurred_at')
             ->get();

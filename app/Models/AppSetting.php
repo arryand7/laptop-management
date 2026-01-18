@@ -13,6 +13,7 @@ class AppSetting extends Model
         'contact_email',
         'contact_phone',
         'contact_address',
+        'timezone',
         'lending_due_mode',
         'lending_due_days',
         'lending_due_time',
@@ -36,6 +37,11 @@ class AppSetting extends Model
         'seb_config_password',
         'seb_client_config_path',
         'seb_additional_notes',
+        'sso_base_url',
+        'sso_client_id',
+        'sso_client_secret',
+        'sso_redirect_uri',
+        'sso_scopes',
     ];
 
     protected $casts = [
