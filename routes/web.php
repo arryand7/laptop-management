@@ -8,7 +8,8 @@ use App\Http\Controllers\Admin\SanctionController as AdminSanctionController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ViolationController as AdminViolationController;
-use App\Http\Controllers\Admin\SsoSyncController;
+use App\Http\Controllers\Admin\SsoSyncController as AdminSsoSyncController;
+use App\Http\Controllers\SsoSyncController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\SsoController;
@@ -36,6 +37,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::post('/sso-sync', [SsoSyncController::class, 'syncAllUsers'])->name('sso.sync')->middleware('role:admin');
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard')->middleware('module:dashboard');
 
@@ -86,8 +88,8 @@ Route::middleware('auth')->group(function () {
             Route::get('safe-exam-browser', [AppSettingController::class, 'safeExamBrowser'])->name('safe-exam-browser');
             Route::put('safe-exam-browser', [AppSettingController::class, 'updateSafeExamBrowser'])->name('safe-exam-browser.update');
 
-            Route::get('sso-sync', [SsoSyncController::class, 'index'])->name('sso-sync');
-            Route::post('sso-sync', [SsoSyncController::class, 'sync'])->name('sso-sync.run');
+            Route::get('sso-sync', [AdminSsoSyncController::class, 'index'])->name('sso-sync');
+            Route::post('sso-sync', [AdminSsoSyncController::class, 'sync'])->name('sso-sync.run');
 
             Route::get('/', function () {
                 return redirect()->route('admin.settings.application');

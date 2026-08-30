@@ -37,16 +37,19 @@ body {
     font-family: var(--font-sans);
     background: var(--app-bg);
     color: var(--app-ink);
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .content-wrapper {
     background: linear-gradient(180deg, #f6faff 0%, #ffffff 35%, #f3f7ff 100%);
+    transition: background 0.25s ease;
 }
 
 .main-header.navbar {
     background: rgba(255, 255, 255, 0.92);
     border-bottom: 1px solid var(--app-border);
     backdrop-filter: blur(18px);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .main-header .nav-link {
@@ -153,6 +156,7 @@ body {
     border-radius: 1rem;
     border: 1px solid var(--app-border);
     box-shadow: 0 15px 30px var(--app-shadow);
+    transition: all 0.25s ease;
 }
 
 .card-header {
@@ -208,14 +212,16 @@ body {
 
 .btn-primary,
 .btn-info {
-    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-    border: none;
-    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25);
+    background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+    border: none !important;
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25) !important;
+    color: #ffffff !important;
 }
 
 .btn-primary:hover,
 .btn-info:hover {
-    background: linear-gradient(135deg, #0284c7, #0ea5e9);
+    background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+    color: #ffffff !important;
 }
 
 .btn-outline-primary {
@@ -261,8 +267,337 @@ body {
 .main-footer {
     background: #ffffff;
     border-top: 1px solid var(--app-border);
+    transition: all 0.25s ease;
 }
 
+/* ==========================================================================
+   COMPREHENSIVE DARK MODE SYSTEM (UI/UX HARMONIZATION)
+   ========================================================================== */
+body.dark-mode {
+    --app-bg: #090e17;
+    --app-surface: #111827;
+    --app-surface-soft: #1e293b;
+    --app-border: #1e293b;
+    --app-ink: #f8fafc;
+    --app-muted: #94a3b8;
+    --app-shadow: rgba(0, 0, 0, 0.5);
+    background-color: #090e17 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .content-wrapper {
+    background: #090e17 !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .main-header.navbar {
+    background: rgba(17, 24, 39, 0.95) !important;
+    border-bottom: 1px solid #1e293b !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .main-header .nav-link {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .main-header .nav-link:hover {
+    color: #38bdf8 !important;
+}
+
+body.dark-mode .content-header h1,
+body.dark-mode .content-header .breadcrumb,
+body.dark-mode .content-header .breadcrumb-item.active {
+    color: #f8fafc !important;
+}
+
+/* Backgrounds in Dark Mode */
+body.dark-mode .bg-white {
+    background-color: #111827 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .bg-slate-50 {
+    background-color: #0b1120 !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .bg-slate-100 {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .bg-slate-200 {
+    background-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+/* Borders in Dark Mode */
+body.dark-mode .border-slate-200,
+body.dark-mode .border-slate-300,
+body.dark-mode .border-slate-100 {
+    border-color: #1e293b !important;
+}
+
+body.dark-mode .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+body.dark-mode .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1e293b !important;
+}
+
+/* Text Colors in Dark Mode */
+body.dark-mode .text-slate-800,
+body.dark-mode .text-slate-700,
+body.dark-mode .text-slate-900,
+body.dark-mode .text-dark {
+    color: #f8fafc !important;
+}
+
+body.dark-mode .text-slate-600,
+body.dark-mode .text-slate-500,
+body.dark-mode .text-muted {
+    color: #94a3b8 !important;
+}
+
+/* Cards & Info Boxes in Dark Mode */
+body.dark-mode .card,
+body.dark-mode .info-box,
+body.dark-mode .small-box {
+    background: #111827 !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45) !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .card-header {
+    border-bottom: 1px solid #1e293b !important;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(17, 24, 39, 0.8)) !important;
+}
+
+body.dark-mode .card-header .card-title {
+    color: #f8fafc !important;
+}
+
+/* Tables & DataTables in Dark Mode */
+body.dark-mode .table {
+    color: #cbd5e1 !important;
+    background-color: transparent !important;
+    border-color: #1e293b !important;
+}
+
+body.dark-mode .table thead th {
+    background-color: #0b1120 !important;
+    color: #94a3b8 !important;
+    border-bottom: 1px solid #1e293b !important;
+    border-color: #1e293b !important;
+}
+
+body.dark-mode .table td,
+body.dark-mode .table th {
+    border-color: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(even) {
+    background-color: transparent !important;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(14, 165, 233, 0.08) !important;
+}
+
+body.dark-mode .table-bordered {
+    border-color: #1e293b !important;
+}
+
+/* Forms & Inputs in Dark Mode */
+body.dark-mode .form-control,
+body.dark-mode .custom-select,
+body.dark-mode input[type="text"],
+body.dark-mode input[type="email"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="file"],
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #0b1120 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .custom-select:focus,
+body.dark-mode select:focus,
+body.dark-mode input:focus,
+body.dark-mode textarea:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.25) !important;
+}
+
+body.dark-mode .form-control::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #64748b !important;
+}
+
+/* DataTables pagination & info in Dark Mode */
+body.dark-mode .dataTables_wrapper .dataTables_filter input,
+body.dark-mode .dataTables_wrapper .dataTables_length select {
+    background-color: #0b1120 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .dataTables_wrapper .dataTables_info,
+body.dark-mode .dataTables_wrapper .dataTables_paginate {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .page-item .page-link {
+    background-color: #111827 !important;
+    border-color: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .page-item.active .page-link {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+    border-color: #0ea5e9 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .page-item.disabled .page-link {
+    background-color: #0b1120 !important;
+    border-color: #1e293b !important;
+    color: #64748b !important;
+}
+
+body.dark-mode .dt-button {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .dt-button:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* Dropdowns & Modals in Dark Mode */
+body.dark-mode .dropdown-menu {
+    background-color: #111827 !important;
+    border: 1px solid #1e293b !important;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background-color: #1e293b !important;
+    color: #38bdf8 !important;
+}
+
+body.dark-mode .dropdown-divider {
+    border-top-color: #1e293b !important;
+}
+
+body.dark-mode .modal-content {
+    background-color: #111827 !important;
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #1e293b !important;
+}
+
+/* Buttons in Dark Mode */
+body.dark-mode .btn-outline-secondary {
+    background-color: #111827 !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .btn-default {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .btn-default:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* Badges in Dark Mode */
+body.dark-mode .bg-emerald-100 {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+}
+
+body.dark-mode .bg-rose-100 {
+    background-color: rgba(244, 63, 94, 0.2) !important;
+    color: #fb7185 !important;
+}
+
+body.dark-mode .bg-amber-100,
+body.dark-mode .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.18) !important;
+    color: #fcd34d !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+body.dark-mode .bg-blue-100,
+body.dark-mode .bg-blue-50 {
+    background-color: rgba(14, 165, 233, 0.18) !important;
+    color: #7dd3fc !important;
+    border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+/* Lookup Suggestions in Dark Mode */
+body.dark-mode .lookup-suggestions {
+    background: #111827 !important;
+    border-color: #1e293b !important;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .lookup-suggestions button {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .lookup-suggestions button:hover,
+body.dark-mode .lookup-suggestions button.active,
+body.dark-mode .lookup-suggestions button:focus {
+    background-color: rgba(14, 165, 233, 0.18) !important;
+    color: #38bdf8 !important;
+}
+
+body.dark-mode .lookup-suggestions .meta {
+    color: #94a3b8 !important;
+}
+
+/* Main Footer in Dark Mode */
+body.dark-mode .main-footer {
+    background: #090e17 !important;
+    border-top: 1px solid #1e293b !important;
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .main-footer a {
+    color: #38bdf8 !important;
+}
+
+/* Media Queries for responsive polish */
 @media (max-width: 991px) {
     .content-header .row {
         display: flex;

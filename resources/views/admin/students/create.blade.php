@@ -8,7 +8,7 @@
         <h1 class="mt-2 text-xl font-semibold text-slate-800">Tambah Siswa Baru</h1>
         <p class="text-sm text-slate-500">QR code akan dibuat otomatis setelah data tersimpan.</p>
 
-        <form action="{{ route('admin.students.store') }}" method="POST" class="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form action="{{ route('admin.students.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             @csrf
             <div class="grid gap-5 md:grid-cols-2">
                 <div>
@@ -46,6 +46,11 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-600" for="password">Kata Sandi (opsional)</label>
                     <input type="text" id="password" name="password" placeholder="Biarkan kosong untuk kata sandi otomatis" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-600" for="avatar">Foto Profil</label>
+                    <input type="file" id="avatar" name="avatar" accept="image/*" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <p class="mt-1 text-xs text-slate-500">Format: JPG, PNG, WebP (maks. 1 MB)</p>
                 </div>
             </div>
             <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Simpan Data</button>

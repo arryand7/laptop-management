@@ -6,8 +6,8 @@
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 class="text-xl font-semibold text-slate-800">Pelanggaran Peminjaman</h1>
         <div class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <a href="{{ route('admin.violations.create') }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-black shadow hover:bg-blue-500">
-                <i class="fas fa-plus mr-2"></i> Tambah Data
+            <a href="{{ route('admin.violations.create') }}" class="btn btn-primary inline-flex items-center gap-2 shadow-sm font-semibold" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #ffffff !important; border: none; padding: 0.45rem 1rem;">
+                <i class="fas fa-plus"></i> <span style="color: #ffffff !important;">Tambah Data</span>
             </a>
         </div>
     </div>

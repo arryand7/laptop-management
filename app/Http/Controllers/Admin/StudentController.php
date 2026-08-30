@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Support\CodeGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -53,6 +54,7 @@ class StudentController extends Controller
             'classroom' => ['required', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'string', 'min:6'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
         ]);
 
         $plainPassword = $validated['password'] ?? Str::random(10);
@@ -71,6 +73,7 @@ class StudentController extends Controller
             'qr_code' => $cardCode,
             'violations_count' => 0,
             'is_active' => true,
+            'avatar_path' => $request->file('avatar')?->store('avatars', 'public'),
         ]);
 
         debug_event('Admin:Students', 'Siswa baru dibuat', ['student' => $student->student_number]);
@@ -132,6 +135,7 @@ class StudentController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'string', 'min:6'],
             'is_active' => ['nullable', 'boolean'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
         ]);
 
         $student->fill([
@@ -147,6 +151,13 @@ class StudentController extends Controller
 
         if (!empty($validated['password'])) {
             $student->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($student->avatar_path && Storage::disk('public')->exists($student->avatar_path)) {
+                Storage::disk('public')->delete($student->avatar_path);
+            }
+            $student->avatar_path = $request->file('avatar')->store('avatars', 'public');
         }
 
         if ($student->isDirty('card_code')) {

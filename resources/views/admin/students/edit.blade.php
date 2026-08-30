@@ -7,7 +7,7 @@
         <a href="{{ route('admin.students.show', $student) }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
         <h1 class="mt-2 text-xl font-semibold text-slate-800">Ubah Data Siswa</h1>
 
-        <form action="{{ route('admin.students.update', $student) }}" method="POST" class="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form action="{{ route('admin.students.update', $student) }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             @csrf
             @method('PUT')
             <div class="grid gap-5 md:grid-cols-2">
@@ -46,6 +46,16 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-600" for="password">Reset Kata Sandi</label>
                     <input type="text" id="password" name="password" placeholder="Biarkan kosong jika tidak diubah" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-600" for="avatar">Foto Profil</label>
+                    <div class="mt-2 flex items-center gap-4">
+                        <img src="{{ $student->avatar_url }}" alt="Avatar {{ $student->name }}" class="h-12 w-12 rounded-full border border-slate-200 object-cover">
+                        <div class="flex-1">
+                            <input type="file" id="avatar" name="avatar" accept="image/*" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <p class="mt-1 text-xs text-slate-500">Format: JPG, PNG, WebP (maks. 1 MB). Biarkan kosong jika tidak ingin mengubah foto.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center gap-2">

@@ -8,8 +8,8 @@
             <h1 class="text-xl font-semibold text-slate-800">Laptop Milik Saya</h1>
             <p class="text-sm text-slate-500">Ajukan perubahan data perangkat Anda jika terdapat informasi yang perlu diperbarui.</p>
             <div class="mt-3 flex flex-wrap gap-2">
-                <a href="{{ route('student.laptops.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-black shadow hover:bg-blue-500">
-                    <i class="fas fa-plus-circle"></i> Tambah Laptop Baru
+                <a href="{{ route('student.laptops.create') }}" class="btn btn-primary inline-flex items-center gap-2 shadow-sm font-semibold" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #ffffff !important; border: none; padding: 0.45rem 1rem;">
+                    <i class="fas fa-plus"></i> <span style="color: #ffffff !important;">Tambah Laptop</span>
                 </a>
             </div>
         </div>

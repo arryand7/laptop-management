@@ -4,10 +4,13 @@
 
 @section('content')
     <div class="flex items-center justify-between">
-        <div>
-            <a href="{{ route('admin.students.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
-            <h1 class="mt-1 text-xl font-semibold text-slate-800">{{ $student->name }}</h1>
-            <p class="text-sm text-slate-500">{{ $student->student_number }} · {{ $student->classroom }}</p>
+        <div class="flex items-center gap-4">
+            <img src="{{ $student->avatar_url }}" alt="Avatar {{ $student->name }}" class="h-16 w-16 rounded-full border-2 border-slate-200 object-cover shadow-sm">
+            <div>
+                <a href="{{ route('admin.students.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
+                <h1 class="mt-1 text-xl font-semibold text-slate-800">{{ $student->name }}</h1>
+                <p class="text-sm text-slate-500">{{ $student->student_number }} · {{ $student->classroom }}</p>
+            </div>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('admin.students.qr', $student) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400">Cetak QR</a>

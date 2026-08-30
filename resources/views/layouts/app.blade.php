@@ -29,6 +29,22 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
+    <script>
+        (function () {
+            try {
+                const raw = localStorage.getItem('ui:layout-settings');
+                if (raw) {
+                    const settings = JSON.parse(raw);
+                    if (settings && settings.darkMode) {
+                        document.documentElement.classList.add('dark-mode');
+                        document.addEventListener('DOMContentLoaded', () => {
+                            document.body.classList.add('dark-mode');
+                        });
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
@@ -46,6 +62,11 @@
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" id="navbar-dark-mode-toggle" title="Toggle Dark / Light Mode" role="button">
+                    <i class="fas fa-moon" id="navbar-dark-mode-icon"></i>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                     <i class="fas fa-expand-arrows-alt"></i>
@@ -920,6 +941,31 @@
 
         $('[data-setting][type="checkbox"]').each(function () {
             initCheckbox($(this));
+        });
+
+        // Sync dark mode toggle button in navbar
+        const $darkModeCheckbox = $('#setting-dark-mode');
+        const $darkModeIcon = $('#navbar-dark-mode-icon');
+        const syncDarkModeIcon = (isDark) => {
+            if ($darkModeIcon.length) {
+                if (isDark) {
+                    $darkModeIcon.removeClass('fa-moon').addClass('fa-sun text-warning');
+                } else {
+                    $darkModeIcon.removeClass('fa-sun text-warning').addClass('fa-moon');
+                }
+            }
+        };
+
+        syncDarkModeIcon($('body').hasClass('dark-mode'));
+
+        $darkModeCheckbox.on('change', function () {
+            syncDarkModeIcon($(this).is(':checked'));
+        });
+
+        $('#navbar-dark-mode-toggle').on('click', function (e) {
+            e.preventDefault();
+            const current = $darkModeCheckbox.is(':checked');
+            $darkModeCheckbox.prop('checked', !current).trigger('change');
         });
 
         const selectControllers = {
