@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sso-sync', [SsoSyncController::class, 'syncAllUsers'])->name('sso.sync')->middleware('role:admin');
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard')->middleware('module:dashboard');
+    Route::get('/dashboard/activity', [DashboardController::class, 'activity'])->name('dashboard.activity')->middleware('module:dashboard');
 
     Route::middleware('role:admin,staff')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', fn () => redirect()->route('dashboard'));

@@ -98,8 +98,15 @@ class ReturnController extends Controller
     public function quickReturn(Request $request, BorrowService $borrowService, BorrowTransaction $transaction)
     {
         if ($transaction->status !== 'borrowed') {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Transaksi sudah tidak aktif.'], 422);
+            }
             return back()->withErrors('Transaksi sudah tidak aktif.')->withInput();
         }
+
+        $ownerName = $transaction->laptop?->owner?->name ?? 'Tidak diketahui';
+        $borrowerName = $transaction->student?->name ?? 'Tidak diketahui';
+        $laptopCode = $transaction->laptop?->code ?? '-';
 
         $borrowService->checkin(
             transaction: $transaction,
@@ -107,6 +114,15 @@ class ReturnController extends Controller
             staffNotes: $request->input('staff_notes')
         );
 
-        return back()->with('status', "Laptop {$transaction->laptop?->code} berhasil ditandai dikembalikan.");
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'owner_name' => $ownerName,
+                'borrower_name' => $borrowerName,
+                'laptop_code' => $laptopCode,
+            ]);
+        }
+
+        return back()->with('status', "Laptop {$laptopCode} berhasil ditandai dikembalikan.");
     }
 }

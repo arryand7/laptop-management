@@ -146,4 +146,45 @@ class DashboardController extends Controller
             'studentSummary' => $studentSummary,
         ]);
     }
+
+    public function activity(Request $request)
+    {
+        $query = BorrowTransaction::with(['student', 'laptop.owner'])
+            ->orderByDesc('borrowed_at');
+
+        if ($request->filled('date_from')) {
+            $query->where('borrowed_at', '>=', Carbon::parse($request->date_from)->startOfDay());
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('borrowed_at', '<=', Carbon::parse($request->date_to)->endOfDay());
+        }
+
+        $transactions = $query->limit(100)->get();
+
+        $data = $transactions->map(function ($trx, $index) {
+            $statusLabel = 'Dikembalikan';
+            $statusClass = 'emerald';
+            if ($trx->status === 'borrowed') {
+                $statusLabel = 'Dipinjam';
+                $statusClass = 'blue';
+            } elseif ($trx->was_late) {
+                $statusLabel = 'Terlambat';
+                $statusClass = 'rose';
+            }
+
+            return [
+                'no' => $index + 1,
+                'borrower_name' => $trx->student?->name ?? '-',
+                'owner_name' => $trx->laptop?->owner?->name ?? '-',
+                'borrowed_at' => $trx->borrowed_at?->translatedFormat('d M Y H:i'),
+                'status_label' => $statusLabel,
+                'status_class' => $statusClass,
+                'returned_at' => $trx->returned_at?->translatedFormat('d M Y H:i') ?? '-',
+                'usage_purpose' => $trx->usage_purpose ?? '-',
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
 }
