@@ -23,12 +23,13 @@ class SsoUserAdapter
      */
     public function transform(array $ssoPayload, ?User $existingUser = null): array
     {
-        $role = $this->translateRole($ssoPayload['role'] ?? $ssoPayload['roles'] ?? $ssoPayload['role_id'] ?? null);
+        $role = $this->translateRole($ssoPayload['type'] ?? $ssoPayload['user_type'] ?? $ssoPayload['role'] ?? $ssoPayload['roles'] ?? $ssoPayload['role_id'] ?? null);
         $name = $this->resolveFullName($ssoPayload);
         $email = strtolower(trim((string) ($ssoPayload['email'] ?? '')));
         $gender = $this->normalizeGender($ssoPayload['gender'] ?? null);
         $phone = $this->cleanPhoneNumber($ssoPayload['phone'] ?? $ssoPayload['phone_number'] ?? null);
-        $isActive = filter_var($ssoPayload['is_active'] ?? $ssoPayload['active'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        $isActiveRaw = $ssoPayload['status'] ?? $ssoPayload['is_active'] ?? $ssoPayload['active'] ?? true;
+        $isActive = $isActiveRaw === 'active' ? true : filter_var($isActiveRaw, FILTER_VALIDATE_BOOLEAN);
         $studentNumber = $role === 'student' ? ($ssoPayload['student_number'] ?? $ssoPayload['nis'] ?? null) : null;
         $classroom = $role === 'student' ? ($ssoPayload['classroom'] ?? $ssoPayload['class_name'] ?? null) : null;
 
@@ -41,18 +42,20 @@ class SsoUserAdapter
                 ?? Str::random(64);
         }
 
-        // Proses foto profil (Mendukung URL atau Base64)
-        $avatarRaw = $ssoPayload['avatar_url']
+        // Proses foto profil (Mendukung URL, Base64, atau objek photo dari Gate Provisioning API)
+        $photoField = $ssoPayload['photo'] ?? null;
+        $avatarRaw = is_array($photoField) ? ($photoField['url'] ?? null) : $photoField;
+        $avatarRaw = $avatarRaw
+            ?? $ssoPayload['avatar_url']
             ?? $ssoPayload['avatar']
             ?? $ssoPayload['photo_url']
-            ?? $ssoPayload['photo']
             ?? $ssoPayload['picture']
             ?? null;
 
         $avatarPath = $this->processAvatar($avatarRaw, $existingUser?->avatar_path);
 
         $transformed = [
-            'sso_sub' => (string) ($ssoPayload['sub'] ?? $ssoPayload['id_sso'] ?? $ssoPayload['id'] ?? null),
+            'sso_sub' => (string) ($ssoPayload['legacy_oidc_subject'] ?? $ssoPayload['sub'] ?? $ssoPayload['id_sso'] ?? $ssoPayload['gate_user_uuid'] ?? $ssoPayload['uuid'] ?? null),
             'name' => $name,
             'email' => $email,
             'role' => $role,
@@ -83,7 +86,7 @@ class SsoUserAdapter
      */
     public function sync(array $ssoPayload): User
     {
-        $sub = $ssoPayload['sub'] ?? $ssoPayload['id_sso'] ?? $ssoPayload['id'] ?? null;
+        $sub = $ssoPayload['legacy_oidc_subject'] ?? $ssoPayload['sub'] ?? $ssoPayload['id_sso'] ?? $ssoPayload['gate_user_uuid'] ?? $ssoPayload['uuid'] ?? $ssoPayload['id'] ?? null;
         $email = strtolower(trim((string) ($ssoPayload['email'] ?? '')));
         $nis = $ssoPayload['student_number'] ?? $ssoPayload['nis'] ?? null;
 

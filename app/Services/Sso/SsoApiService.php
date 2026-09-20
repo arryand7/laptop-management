@@ -37,8 +37,9 @@ class SsoApiService
             $queryParams['updated_since'] = $formattedSince;
         }
 
-        // Endpoint prioritas dari Gate SSO
+        // Endpoint prioritas dari Gate SSO (Provisioning API)
         $endpoints = [
+            $baseUrl . '/api/provisioning/users',
             $baseUrl . '/api/sso/users',
             $baseUrl . '/api/users',
             $baseUrl . '/oauth/users',
@@ -48,9 +49,11 @@ class SsoApiService
 
         if ($accessToken) {
             $client = $client->withToken($accessToken);
-        } elseif (!empty($config['client_secret'])) {
+        }
+
+        if (!empty($config['client_id']) && !empty($config['client_secret'])) {
             $client = $client->withHeaders([
-                'X-Client-Id' => $config['client_id'] ?? '',
+                'X-Client-Id' => $config['client_id'],
                 'X-Client-Secret' => $config['client_secret'],
             ]);
         }
