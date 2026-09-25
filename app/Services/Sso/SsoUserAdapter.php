@@ -26,12 +26,12 @@ class SsoUserAdapter
         $role = $this->translateRole($ssoPayload['type'] ?? $ssoPayload['user_type'] ?? $ssoPayload['role'] ?? $ssoPayload['roles'] ?? $ssoPayload['role_id'] ?? null);
         $name = $this->resolveFullName($ssoPayload);
         $email = strtolower(trim((string) ($ssoPayload['email'] ?? '')));
-        $gender = $this->normalizeGender($ssoPayload['gender'] ?? null);
-        $phone = $this->cleanPhoneNumber($ssoPayload['phone'] ?? $ssoPayload['phone_number'] ?? null);
+        $gender = $this->normalizeGender($ssoPayload['gender'] ?? $existingUser?->gender ?? null);
+        $phone = $this->cleanPhoneNumber($ssoPayload['phone'] ?? $ssoPayload['phone_number'] ?? $existingUser?->phone);
         $isActiveRaw = $ssoPayload['status'] ?? $ssoPayload['is_active'] ?? $ssoPayload['active'] ?? true;
         $isActive = $isActiveRaw === 'active' ? true : filter_var($isActiveRaw, FILTER_VALIDATE_BOOLEAN);
         $studentNumber = $role === 'student' ? ($ssoPayload['student_number'] ?? $ssoPayload['nis'] ?? null) : null;
-        $classroom = $role === 'student' ? ($ssoPayload['classroom'] ?? $ssoPayload['class_name'] ?? null) : null;
+        $classroom = $role === 'student' ? ($ssoPayload['classroom'] ?? $ssoPayload['class_name'] ?? $existingUser?->classroom) : null;
 
         // Card code resolution: pertahankan yang sudah ada, gunakan dari SSO, atau generate untuk student baru
         $cardCode = null;
