@@ -27,6 +27,10 @@
                     <dd>{{ $student->email }}</dd>
                 </div>
                 <div class="flex justify-between">
+                    <dt>NISN</dt>
+                    <dd>{{ $student->nisn ?? '-' }}</dd>
+                </div>
+                <div class="flex justify-between">
                     <dt>No. HP</dt>
                     <dd>{{ $student->phone ?? '-' }}</dd>
                 </div>

@@ -9,14 +9,28 @@
             <a href="{{ route('admin.laptops.template') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
                 <i class="fas fa-file-download"></i> Template Import
             </a>
+            <a href="{{ route('admin.laptops.export') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                <i class="fas fa-file-export"></i> Export Data
+            </a>
             <form action="{{ route('admin.laptops.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
                 @csrf
-                <label class="font-semibold text-slate-600 mb-0">Import Excel</label>
-                <input type="file" name="file" class="text-xs" accept=".xlsx,.xls" required>
-                <button type="submit" class="rounded bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-700">Upload</button>
+                <label for="import-file" class="font-semibold text-slate-600 mb-0">Import / Update</label>
+                <input type="file" id="import-file" name="file" class="text-xs" accept=".xlsx,.xls,.csv" required>
+                <button type="submit" class="rounded bg-slate-900 px-3 py-1 text-xs font-semibold text-white hover:bg-slate-700">Upload &amp; Dry Run</button>
             </form>
         </div>
     </div>
+
+    @if(session('import_errors') && count(session('import_errors')))
+        <div class="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <p class="font-semibold mb-1">Baris yang dilewati saat import:</p>
+            <ul class="list-disc pl-5 mb-0 space-y-0.5">
+                @foreach(array_slice(session('import_errors'), 0, 50) as $line)
+                    <li>{{ $line }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <form method="GET" class="mt-6 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
         <div class="md:col-span-2">

@@ -36,12 +36,14 @@
             <a href="{{ route('admin.students.template') }}" class="btn btn-outline-secondary bg-white font-semibold inline-flex items-center gap-2 shadow-sm" style="border-color: #cbd5e1; color: #475569 !important; font-size: 0.825rem; padding: 0.4rem 0.75rem;">
                 <i class="fas fa-file-download"></i> Template Import
             </a>
+            <a href="{{ route('admin.students.export') }}" class="btn btn-outline-secondary bg-white font-semibold inline-flex items-center gap-2 shadow-sm" style="border-color: #cbd5e1; color: #475569 !important; font-size: 0.825rem; padding: 0.4rem 0.75rem;">
+                <i class="fas fa-file-export"></i> Export Data
+            </a>
             <form action="{{ route('admin.students.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs shadow-sm">
                 @csrf
-                <label class="font-semibold text-slate-600 mb-0">Import Excel</label>
-                <input type="file" name="file" class="text-xs" accept=".xlsx,.xls" required>
-                <input type="text" name="default_password" value="password" placeholder="Default password" class="w-32 rounded border border-slate-300 px-2 py-0.5 text-xs">
-                <button type="submit" class="rounded bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-700">Upload</button>
+                <label for="import-file" class="font-semibold text-slate-600 mb-0">Import / Update</label>
+                <input type="file" id="import-file" name="file" class="text-xs" accept=".xlsx,.xls,.csv" required>
+                <button type="submit" class="rounded bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-700">Upload &amp; Dry Run</button>
             </form>
         </div>
     </div>
@@ -52,6 +54,17 @@
     @if(session('generated_password'))
         <div class="mt-3 mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
             Kata sandi sementara untuk siswa baru: <span class="font-mono font-bold">{{ session('generated_password') }}</span>
+        </div>
+    @endif
+
+    @if(session('import_errors') && count(session('import_errors')))
+        <div class="mt-3 mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <p class="font-semibold mb-1">Baris yang dilewati saat import:</p>
+            <ul class="list-disc pl-5 mb-0 space-y-0.5">
+                @foreach(array_slice(session('import_errors'), 0, 50) as $line)
+                    <li>{{ $line }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 

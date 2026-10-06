@@ -24,6 +24,10 @@
                     <input type="text" id="student_number" name="student_number" value="{{ old('student_number', $student->student_number) }}" required class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-slate-600" for="nisn">NISN</label>
+                    <input type="text" id="nisn" name="nisn" value="{{ old('nisn', $student->nisn) }}" maxlength="20" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-slate-600" for="card_code">Kode Kartu</label>
                     <input type="text" id="card_code" name="card_code" value="{{ old('card_code', $student->card_code) }}" placeholder="Scan/masukkan kode kartu" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>

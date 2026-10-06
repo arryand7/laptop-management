@@ -47,7 +47,11 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware('module:admin.students')->group(function () {
             Route::get('students/template', [AdminStudentController::class, 'downloadTemplate'])->name('students.template');
+            Route::get('students/export', [AdminStudentController::class, 'export'])->name('students.export');
             Route::post('students/import', [AdminStudentController::class, 'import'])->name('students.import');
+            Route::get('students/import/preview', [AdminStudentController::class, 'importPreview'])->name('students.import.preview');
+            Route::post('students/import/commit', [AdminStudentController::class, 'importCommit'])->name('students.import.commit');
+            Route::post('students/import/cancel', [AdminStudentController::class, 'importCancel'])->name('students.import.cancel');
             Route::post('students/bulk', [AdminStudentController::class, 'bulkUpdate'])->name('students.bulk');
             Route::get('students/{student}/qr', [AdminStudentController::class, 'qr'])->name('students.qr');
             Route::resource('students', AdminStudentController::class);
@@ -55,7 +59,11 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware('module:admin.laptops')->group(function () {
             Route::get('laptops/template', [AdminLaptopController::class, 'downloadTemplate'])->name('laptops.template');
+            Route::get('laptops/export', [AdminLaptopController::class, 'export'])->name('laptops.export');
             Route::post('laptops/import', [AdminLaptopController::class, 'import'])->name('laptops.import');
+            Route::get('laptops/import/preview', [AdminLaptopController::class, 'importPreview'])->name('laptops.import.preview');
+            Route::post('laptops/import/commit', [AdminLaptopController::class, 'importCommit'])->name('laptops.import.commit');
+            Route::post('laptops/import/cancel', [AdminLaptopController::class, 'importCancel'])->name('laptops.import.cancel');
             Route::post('laptops/bulk', [AdminLaptopController::class, 'bulkUpdate'])->name('laptops.bulk');
             Route::get('laptops/{laptop}/qr', [AdminLaptopController::class, 'qr'])->name('laptops.qr');
             Route::resource('laptops', AdminLaptopController::class);
