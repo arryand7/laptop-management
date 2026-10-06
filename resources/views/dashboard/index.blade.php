@@ -77,7 +77,7 @@
                             <thead class="text-xs uppercase text-slate-400">
                                 <tr>
                                     <th class="pb-2">Kode</th>
-                                    <th class="pb-2">Nama</th>
+                                    <th class="pb-2">Laptop</th>
                                     <th class="pb-2">Pemilik Laptop</th>
                                     <th class="pb-2">Dipinjam Oleh</th>
                                     <th class="pb-2">Jatuh Tempo</th>

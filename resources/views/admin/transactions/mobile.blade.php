@@ -55,10 +55,10 @@
                     <div class="rounded-2xl border border-slate-100 px-4 py-3 text-sm text-slate-600">
                         <div class="flex items-center justify-between text-xs text-slate-400">
                             <span>{{ $transaction->borrowed_at?->diffForHumans() ?? '-' }}</span>
-                            <span>{{ strtoupper($transaction->transaction_code) }}</span>
+                            <span>{{ $transaction->borrowed_at?->translatedFormat('d M Y H:i') ?? '-' }}</span>
                         </div>
-                        <p class="mt-1 text-sm font-semibold text-slate-800">{{ $transaction->student?->name ?? '-' }} • {{ $transaction->laptop?->code }}</p>
-                        <p class="text-xs text-slate-500">{{ $transaction->laptop?->name }}</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-800">{{ $transaction->student?->name ?? '-' }}</p>
+                        <p class="text-xs text-slate-500"><strong>{{ $transaction->laptop?->name }}</strong> • ({{ $transaction->laptop->owner?->name }})</p>
                         <div class="mt-2 text-xs">
                             @if($transaction->status === 'borrowed')
                                 <span class="rounded-full bg-amber-100 px-2 py-1 font-semibold text-amber-600">Borrowed</span>

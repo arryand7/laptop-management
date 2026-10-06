@@ -78,7 +78,7 @@
                 <table class="min-w-full divide-y divide-slate-200 text-sm" id="recent-table">
                     <thead class="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                         <tr>
-                            <th class="py-2">Waktu</th>
+                            <th class="py-2">Waktu Pinjam</th>
                             <th class="py-2">Siswa</th>
                             <th class="py-2">Laptop</th>
                             <th class="py-2">Aksi</th>
@@ -94,7 +94,7 @@
                                     <div class="text-xs text-slate-400">{{ $transaction->student?->student_number }}</div>
                                 </td>
                                 <td class="py-2">
-                                    <div class="font-medium text-slate-700">{{ $transaction->laptop?->code }}</div>
+                                    <div class="font-medium text-slate-700">{{ $transaction->laptop->owner?->name }}</div>
                                     <div class="text-xs text-slate-400">{{ $transaction->laptop?->name }}</div>
                                 </td>
                                 <td class="py-2">

@@ -14,7 +14,7 @@
                 <p class="qr-code"><strong>{{ $laptop->code }}</strong></p>
                 <div class="qr-meta">
                     @if($laptop->owner)
-                        <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 19) }}</p>
+                        <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 40) }}</p>
                     @endif
                 </div>
                 <div class="qr-box">
@@ -31,10 +31,9 @@
 @push('styles')
     <style>
         .qr-label {
-            width: 3.5cm;
-            height: 4.7cm;
-            border: 1px solid #cbd5f5;
-            border-radius: 0.6rem;
+            width: 5cm;
+            height: 3.5cm;
+            border: 3px solid #cbd5f5;
             padding: 0.1cm;
             display: flex;
             flex-direction: column;
@@ -47,17 +46,20 @@
             line-height: 1.2;
         }
         .qr-code {
+            font-size: 0.6rem;
             font-weight: 700;
             letter-spacing: 0.05em;
             color: #1e293b;
             margin: 0;
         }
         .qr-name {
+            font-size: 0.7rem;
             margin: 0;
             color: #475569;
             font-weight: 600;
         }
         .qr-owner {
+            font-size: 0.75rem;
             margin: 0;
             color: #94a3b8;
         }
@@ -68,8 +70,8 @@
             justify-content: center;
         }
         .qr-box svg {
-            width: 100%;
-            height: 100%;
+            width: 1.8cm;
+            height: 1.8cm;
         }
         @media print {
             .no-print {

@@ -89,7 +89,7 @@
                         <td class="px-4 py-3 text-center align-middle">
                             <input type="checkbox" class="js-row-checkbox" name="laptop_ids[]" value="{{ $laptop->id }}" form="{{ $laptopsFormId }}">
                         </td>
-                        <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ $laptop->code }}</td>
+                        <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ $laptop->serial_number }}</td>
                         <td class="px-4 py-3 font-medium text-slate-800">{{ $laptop->name }}</td>
                         <td class="px-4 py-3">{{ $laptop->brand }} {{ $laptop->model }}</td>
                         <td class="px-4 py-3">
