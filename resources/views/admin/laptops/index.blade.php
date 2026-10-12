@@ -88,7 +88,7 @@
                     <th class="select-checkbox px-4 py-3 text-center align-middle" data-orderable="false">
                         <input type="checkbox" class="js-select-all" data-target="#laptops-table">
                     </th>
-                    <th class="px-4 py-3">Kode</th>
+                    <th class="px-4 py-3">Serial Number</th>
                     <th class="px-4 py-3">Nama</th>
                     <th class="px-4 py-3">Brand / Model</th>
                     <th class="px-4 py-3">Pemilik</th>

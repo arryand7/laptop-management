@@ -12,7 +12,7 @@ class LaptopsExport implements FromCollection, WithMapping, WithHeadings
 {
     public function collection(): Collection
     {
-        return Laptop::with('owner')->orderBy('code')->get();
+        return Laptop::with('owner')->orderBy('serial_number')->get();
     }
 
     public function map($laptop): array
@@ -20,7 +20,6 @@ class LaptopsExport implements FromCollection, WithMapping, WithHeadings
         $specs = $laptop->specifications ?? [];
 
         return [
-            $laptop->code,
             $laptop->name,
             $laptop->brand,
             $laptop->model,
@@ -32,12 +31,11 @@ class LaptopsExport implements FromCollection, WithMapping, WithHeadings
             $specs['ram'] ?? '',
             $specs['storage'] ?? '',
             $specs['os'] ?? '',
-            $laptop->qr_code,
         ];
     }
 
     public function headings(): array
     {
-        return ['code', 'name', 'brand', 'model', 'serial_number', 'status', 'owner_student_number', 'notes', 'spec_cpu', 'spec_ram', 'spec_storage', 'spec_os', 'qr_code'];
+        return ['name', 'brand', 'model', 'serial_number', 'status', 'owner_student_number', 'notes', 'spec_cpu', 'spec_ram', 'spec_storage', 'spec_os'];
     }
 }

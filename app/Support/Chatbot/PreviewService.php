@@ -133,9 +133,8 @@ class PreviewService
 
         if ($targetIdentifier) {
             $query->whereHas('laptop', function ($q) use ($targetIdentifier) {
-                $q->where('code', $targetIdentifier)
+                $q->where('serial_number', $targetIdentifier)
                     ->orWhere('qr_code', $targetIdentifier)
-                    ->orWhere('serial_number', $targetIdentifier)
                     ->orWhereHas('owner', function ($owner) use ($targetIdentifier) {
                         $owner->where('student_number', $targetIdentifier);
                     });

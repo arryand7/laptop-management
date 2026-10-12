@@ -77,7 +77,7 @@
                     <div class="mt-2 space-y-2 text-sm text-slate-600">
                         @forelse($foundDetails as $detail)
                             <div class="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2">
-                                <div class="font-semibold text-slate-800">{{ $detail->laptop->code }}</div>
+                                <div class="font-semibold text-slate-800">{{ $detail->laptop->serial_number }}</div>
                                 <div class="text-xs text-slate-500">{{ $detail->laptop->name }}</div>
                             </div>
                         @empty
@@ -91,7 +91,7 @@
                     <div class="mt-2 space-y-2 text-sm text-rose-700">
                         @forelse($missingDetails as $detail)
                             <div class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2">
-                                <div class="font-semibold text-rose-700">{{ $detail->laptop->code }}</div>
+                                <div class="font-semibold text-rose-700">{{ $detail->laptop->serial_number }}</div>
                                 <div class="text-xs text-rose-500">{{ $detail->laptop->name }}</div>
                                 @if($detail->laptop->owner)
                                     <div class="text-xs text-rose-500">Pemilik: {{ $detail->laptop->owner->name }}</div>
@@ -108,7 +108,7 @@
                     <div class="mt-2 space-y-2 text-sm text-amber-700">
                         @forelse($borrowedDetails as $detail)
                             <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                                <div class="font-semibold text-amber-700">{{ $detail->laptop->code }}</div>
+                                <div class="font-semibold text-amber-700">{{ $detail->laptop->serial_number }}</div>
                                 <div class="text-xs text-amber-500">{{ $detail->laptop->name }}</div>
                                 @if($detail->laptop->owner)
                                     <div class="text-xs text-rose-500">Pemilik: {{ $detail->laptop->owner->name }}</div>

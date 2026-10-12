@@ -7,7 +7,7 @@
         <div class="flex items-center justify-between">
             <a href="{{ route('student.laptops.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
             <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                {{ $laptop->code }}
+                {{ $laptop->serial_number }}
             </span>
         </div>
 

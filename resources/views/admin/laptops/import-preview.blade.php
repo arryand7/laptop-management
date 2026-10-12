@@ -52,7 +52,7 @@
                 <thead>
                     <tr class="text-xs uppercase text-slate-500">
                         <th>Baris</th>
-                        <th>Kode / Serial</th>
+                        <th>Serial Number</th>
                         <th>Nama</th>
                         <th>Status</th>
                         <th>Detail</th>

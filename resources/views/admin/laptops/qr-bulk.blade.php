@@ -110,7 +110,7 @@
             @foreach($entries as $entry)
                 <div class="qr-label">
                     <div class="qr-meta qr-top">
-                        <p class="qr-code">{{ $entry['laptop']->code }}</p>
+                        <p class="qr-code">{{ $entry['laptop']->serial_number }}</p>
                         @if($entry['laptop']->owner)
                             <p class="qr-owner"><strong>{{ \Illuminate\Support\Str::limit($entry['laptop']->owner->name, 40) }}</strong></p>
                         @endif

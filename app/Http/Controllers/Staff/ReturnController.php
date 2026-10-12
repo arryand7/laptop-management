@@ -36,7 +36,6 @@ class ReturnController extends Controller
         $laptop = Laptop::with(['owner', 'borrowTransactions' => fn ($query) => $query->where('status', 'borrowed')->latest('borrowed_at')])
             ->where(function ($query) use ($laptopIdentifier) {
                 $query->where('qr_code', $laptopIdentifier)
-                    ->orWhere('code', $laptopIdentifier)
                     ->orWhere('serial_number', $laptopIdentifier)
                     ->orWhereRaw('LOWER(name) = ?', [Str::lower($laptopIdentifier)]);
             })
@@ -47,9 +46,8 @@ class ReturnController extends Controller
 
         if (!$laptop) {
             $laptop = Laptop::with('owner')
-                ->where('code', 'like', "%{$laptopIdentifier}%")
+                ->where('serial_number', 'like', "%{$laptopIdentifier}%")
                 ->orWhere('name', 'like', "%{$laptopIdentifier}%")
-                ->orWhere('serial_number', 'like', "%{$laptopIdentifier}%")
                 ->orWhereHas('owner', function ($query) use ($laptopIdentifier) {
                     $query->where('student_number', 'like', "%{$laptopIdentifier}%");
                 })

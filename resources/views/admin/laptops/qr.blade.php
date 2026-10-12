@@ -11,7 +11,7 @@
 
         <div class="flex justify-center">
             <div class="qr-label">
-                <p class="qr-code"><strong>{{ $laptop->code }}</strong></p>
+                <p class="qr-code"><strong>{{ $laptop->serial_number }}</strong></p>
                 <div class="qr-meta">
                     @if($laptop->owner)
                         <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 40) }}</p>
@@ -21,7 +21,9 @@
                     {!! $qrSvg !!}
                 </div>
                 <div class="qr-meta">
-                    <p class="qr-name"><strong>{{ \Illuminate\Support\Str::limit($laptop->owner->student_number, 10) }}</strong></p>
+                    @if($laptop->owner)
+                        <p class="qr-name"><strong>{{ \Illuminate\Support\Str::limit($laptop->owner->student_number, 10) }}</strong></p>
+                    @endif
                 </div>
             </div>
         </div>

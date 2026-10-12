@@ -27,13 +27,13 @@ class LaptopController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where(function ($inner) use ($search) {
                     $inner->where('name', 'like', "%{$search}%")
-                        ->orWhere('code', 'like', "%{$search}%")
+                        ->orWhere('serial_number', 'like', "%{$search}%")
                         ->orWhere('brand', 'like', "%{$search}%")
                         ->orWhere('model', 'like', "%{$search}%");
                 });
             })
             ->when($status, fn ($query, $status) => $query->where('status', $status))
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->get();
 
         debug_event('Admin:Laptops', 'Menampilkan daftar laptop', [
@@ -75,29 +75,24 @@ class LaptopController extends Controller
             'os' => $validated['spec_os'] ?? null,
         ], fn ($value) => !empty($value));
 
-        $ownerId = $validated['owner_id'] ?? null;
-        $ownerStudentNumber = null;
-        if ($ownerId) {
-            $ownerStudentNumber = User::students()->whereKey($ownerId)->value('student_number');
-        }
-
-        $qrCode = $ownerStudentNumber ?: CodeGenerator::laptopQr();
+        $serialNumber = !empty($validated['serial_number'])
+            ? trim((string) $validated['serial_number'])
+            : CodeGenerator::laptopCode();
 
         $laptop = Laptop::create([
-            'code' => CodeGenerator::laptopCode(),
             'name' => $validated['name'],
             'brand' => $validated['brand'] ?? null,
             'model' => $validated['model'] ?? null,
-            'serial_number' => $validated['serial_number'] ?? null,
+            'serial_number' => $serialNumber,
             'status' => $validated['status'],
             'owner_id' => $validated['owner_id'] ?? null,
             'notes' => $validated['notes'] ?? null,
             'specifications' => $specifications ?: null,
-            'qr_code' => $qrCode,
+            'qr_code' => $serialNumber,
             'last_checked_at' => now(),
         ]);
 
-        debug_event('Admin:Laptops', 'Laptop baru dibuat', ['code' => $laptop->code]);
+        debug_event('Admin:Laptops', 'Laptop baru dibuat', ['serial_number' => $laptop->serial_number]);
 
         return redirect()
             ->route('admin.laptops.index')
@@ -142,31 +137,23 @@ class LaptopController extends Controller
         ], fn ($value) => !empty($value));
 
         $ownerId = $validated['owner_id'] ?? null;
-        $ownerStudentNumber = null;
-        if ($ownerId) {
-            $ownerStudentNumber = User::students()->whereKey($ownerId)->value('student_number');
-        }
+        $serialNumber = !empty($validated['serial_number'])
+            ? trim((string) $validated['serial_number'])
+            : ($laptop->serial_number ?: CodeGenerator::laptopCode());
 
         $laptop->update([
             'name' => $validated['name'],
             'brand' => $validated['brand'] ?? null,
             'model' => $validated['model'] ?? null,
-            'serial_number' => $validated['serial_number'] ?? null,
+            'serial_number' => $serialNumber,
             'status' => $validated['status'],
             'owner_id' => $validated['owner_id'] ?? null,
             'notes' => $validated['notes'] ?? null,
             'specifications' => $specifications ?: null,
+            'qr_code' => $serialNumber,
         ]);
 
-        if ($ownerStudentNumber) {
-            $laptop->update(['qr_code' => $ownerStudentNumber]);
-        }
-
-        if ($request->boolean('regenerate_qr')) {
-            $laptop->update(['qr_code' => $ownerStudentNumber ?: CodeGenerator::laptopQr()]);
-        }
-
-        debug_event('Admin:Laptops', 'Laptop diperbarui', ['code' => $laptop->code]);
+        debug_event('Admin:Laptops', 'Laptop diperbarui', ['serial_number' => $laptop->serial_number]);
 
         return redirect()
             ->route('admin.laptops.show', $laptop)
@@ -184,7 +171,7 @@ class LaptopController extends Controller
 
         $laptop->delete();
 
-        debug_event('Admin:Laptops', 'Laptop dihapus', ['code' => $laptop->code]);
+        debug_event('Admin:Laptops', 'Laptop dihapus', ['serial_number' => $laptop->serial_number]);
 
         return redirect()
             ->route('admin.laptops.index')
@@ -196,7 +183,7 @@ class LaptopController extends Controller
         $qrSvg = QrCode::format('svg')
             ->size(240)
             ->margin(1)
-            ->generate($laptop->qr_code);
+            ->generate($laptop->serial_number);
 
         return view('admin.laptops.qr', compact('laptop', 'qrSvg'));
     }
@@ -358,15 +345,15 @@ class LaptopController extends Controller
         }
     }
 
-    private const TEMPLATE_HEADERS = ['code', 'name', 'brand', 'model', 'serial_number', 'status', 'owner_student_number', 'notes', 'spec_cpu', 'spec_ram', 'spec_storage', 'spec_os', 'qr_code'];
+    private const TEMPLATE_HEADERS = ['name', 'brand', 'model', 'serial_number', 'status', 'owner_student_number', 'notes', 'spec_cpu', 'spec_ram', 'spec_storage', 'spec_os'];
 
     public function downloadTemplate()
     {
         debug_event('Admin:Laptops', 'Download template import', []);
 
         $samples = [
-            ['LP-0001', 'Laptop Perpustakaan', 'Dell', 'Inspiron 14', 'DELL-001', 'available', '', '', 'Intel Core i5', '8GB', '512GB SSD', 'Windows 11', ''],
-            ['LP-0002', 'Laptop Kelas XI', 'Acer', 'Swift 3', 'ACER-002', 'maintenance', '', 'Contoh baris update', 'Intel Core i7', '16GB', '512GB SSD', 'Windows 11', ''],
+            ['Laptop Perpustakaan', 'Dell', 'Inspiron 14', 'DELL-001', 'available', '', '', 'Intel Core i5', '8GB', '512GB SSD', 'Windows 11'],
+            ['Laptop Kelas XI', 'Acer', 'Swift 3', 'ACER-002', 'maintenance', '', 'Contoh baris update', 'Intel Core i7', '16GB', '512GB SSD', 'Windows 11'],
         ];
 
         return $this->streamCsv('template-import-laptop.csv', $samples);
@@ -380,8 +367,7 @@ class LaptopController extends Controller
     {
         debug_event('Admin:Laptops', 'Export data laptop', []);
 
-        $rows = Laptop::query()->with('owner:id,student_number')->orderBy('code')->get()->map(fn (Laptop $l) => [
-            $l->code,
+        $rows = Laptop::query()->with('owner:id,student_number')->orderBy('serial_number')->get()->map(fn (Laptop $l) => [
             $l->name,
             $l->brand,
             $l->model,
@@ -393,7 +379,6 @@ class LaptopController extends Controller
             $l->specifications['ram'] ?? null,
             $l->specifications['storage'] ?? null,
             $l->specifications['os'] ?? null,
-            $l->qr_code,
         ])->all();
 
         return $this->streamCsv('data-laptop-' . now()->format('Ymd-His') . '.csv', $rows);
@@ -433,7 +418,7 @@ class LaptopController extends Controller
                     'qrSvg' => QrCode::format('svg')
                         ->size(180)
                         ->margin(0)
-                        ->generate($laptop->qr_code),
+                        ->generate($laptop->serial_number),
                 ];
             });
 
@@ -452,7 +437,7 @@ class LaptopController extends Controller
                     ->contains(fn ($trx) => in_array($trx->status, ['borrowed', 'late'], true));
 
                 if ($hasActiveBorrow) {
-                    $blocked[] = $laptop->code;
+                    $blocked[] = $laptop->serial_number;
                     continue;
                 }
 

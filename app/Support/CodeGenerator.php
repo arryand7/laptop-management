@@ -19,7 +19,7 @@ class CodeGenerator
 
     public static function laptopCode(): string
     {
-        return self::uniqueCode('laptops', 'code', 'LP-' . Str::upper(Str::random(5)));
+        return self::uniqueCode('laptops', 'serial_number', 'LP-' . Str::upper(Str::random(5)));
     }
 
     public static function transactionCode(): string

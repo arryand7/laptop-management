@@ -6,7 +6,7 @@
     <div class="max-w-3xl">
         <a href="{{ route('admin.laptops.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
         <h1 class="mt-2 text-xl font-semibold text-slate-800">Tambah Laptop Baru</h1>
-        <p class="text-sm text-slate-500">QR code dan kode inventaris akan dibuat otomatis.</p>
+        <p class="text-sm text-slate-500">QR code dan serial number akan dibuat otomatis jika dikosongkan.</p>
 
         <form action="{{ route('admin.laptops.store') }}" method="POST" class="mt-6 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             @csrf
@@ -24,8 +24,8 @@
                     <input type="text" id="model" name="model" value="{{ old('model') }}" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-600" for="serial_number">Kode Laptop (Almari-Lantai-Nomor)</label>
-                    <input type="text" id="serial_number" name="serial_number" value="{{ old('serial_number') }}" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <label class="block text-sm font-medium text-slate-600" for="serial_number">Serial Number / Kode Laptop</label>
+                    <input type="text" id="serial_number" name="serial_number" value="{{ old('serial_number') }}" placeholder="Contoh: A1L1-1 (otomatis jika kosong)" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-600" for="status">Status</label>

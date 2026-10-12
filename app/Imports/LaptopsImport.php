@@ -51,14 +51,14 @@ class LaptopsImport extends StringValueBinder implements ToModel, WithHeadingRow
             'os' => $row['spec_os'] ?? null,
         ], fn ($value) => $value !== null);
 
-        $qrCode = $this->resolveQrCode($row['qr_code'] ?? null, $ownerIdentifier);
+        $serialNumber = $row['serial_number'] ?? $row['code'] ?? CodeGenerator::laptopCode();
+        $qrCode = $this->resolveQrCode($serialNumber, $ownerIdentifier);
 
         return new Laptop([
-            'code' => $row['code'] ?? CodeGenerator::laptopCode(),
             'name' => $row['name'] ?? null,
             'brand' => $row['brand'] ?? null,
             'model' => $row['model'] ?? null,
-            'serial_number' => $row['serial_number'] ?? null,
+            'serial_number' => $serialNumber,
             'status' => $row['status'] ?? 'available',
             'owner_id' => $ownerId,
             'specifications' => $specs ?: null,
@@ -72,7 +72,6 @@ class LaptopsImport extends StringValueBinder implements ToModel, WithHeadingRow
     {
         return [
             '*.name' => ['required', 'string', 'max:255'],
-            '*.code' => ['nullable', 'string', 'max:50', Rule::unique('laptops', 'code')],
             '*.serial_number' => ['nullable', 'string', 'max:100', Rule::unique('laptops', 'serial_number')],
             '*.qr_code' => [
                 'nullable',

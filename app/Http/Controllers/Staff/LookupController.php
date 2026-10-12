@@ -50,7 +50,6 @@ class LookupController extends Controller
                 $lower = Str::lower($query);
                 $builder->where(function ($inner) use ($query, $lower) {
                     $inner->where('qr_code', $query)
-                        ->orWhere('code', $query)
                         ->orWhere('serial_number', $query)
                         ->orWhereRaw('LOWER(name) = ?', [$lower]);
                 })
@@ -60,14 +59,15 @@ class LookupController extends Controller
                 });
             })
             ->when($request->boolean('only_borrowed'), fn ($builder) => $builder->where('status', 'borrowed'))
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->limit(10)
-            ->get(['id', 'code', 'name', 'qr_code', 'status', 'owner_id']);
+            ->get(['id', 'serial_number', 'name', 'qr_code', 'status', 'owner_id']);
 
         return response()->json(
             $laptops->map(fn (Laptop $laptop) => [
                 'id' => $laptop->id,
-                'code' => $laptop->code,
+                'code' => $laptop->serial_number,
+                'serial_number' => $laptop->serial_number,
                 'name' => $laptop->name,
                 'qr_code' => $laptop->qr_code,
                 'status' => $laptop->status,

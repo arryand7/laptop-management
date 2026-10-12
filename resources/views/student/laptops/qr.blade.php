@@ -12,7 +12,7 @@
         <div class="flex justify-center">
             <div class="qr-label">
                 <div class="qr-meta">
-                    <p class="qr-code">{{ $laptop->code }}</p>
+                    <p class="qr-code">{{ $laptop->serial_number }}</p>
                     <p class="qr-name">{{ \Illuminate\Support\Str::limit($laptop->name, 22) }}</p>
                     @if($laptop->owner)
                         <p class="qr-owner">{{ \Illuminate\Support\Str::limit($laptop->owner->name, 22) }}</p>

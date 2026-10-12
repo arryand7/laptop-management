@@ -10,7 +10,6 @@ class Laptop extends Model
     use HasFactory;
 
     protected $fillable = [
-        'code',
         'name',
         'brand',
         'model',
@@ -23,6 +22,25 @@ class Laptop extends Model
         'notes',
         'last_checked_at',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Laptop $laptop) {
+            if (!empty($laptop->serial_number) && empty($laptop->qr_code)) {
+                $laptop->qr_code = $laptop->serial_number;
+            }
+        });
+    }
+
+    public function getCodeAttribute(): ?string
+    {
+        return $this->serial_number;
+    }
+
+    public function setCodeAttribute(?string $value): void
+    {
+        $this->attributes['serial_number'] = $value;
+    }
 
     protected function casts(): array
     {

@@ -114,8 +114,8 @@ class LaptopTransactionController extends Controller
         }
 
         $statusMessages = [
-            'maintenance' => "Laptop {$laptop->code} sedang dalam perawatan.",
-            'retired' => "Laptop {$laptop->code} tidak dapat dipinjam karena status dinonaktifkan.",
+            'maintenance' => "Laptop {$laptop->serial_number} sedang dalam perawatan.",
+            'retired' => "Laptop {$laptop->serial_number} tidak dapat dipinjam karena status dinonaktifkan.",
         ];
 
         $message = $statusMessages[$laptop->status] ?? 'Laptop sedang tidak dapat diproses.';
@@ -225,8 +225,8 @@ class LaptopTransactionController extends Controller
         }
 
         $statusMessages = [
-            'maintenance' => "Laptop {$laptop->code} sedang dalam perawatan.",
-            'retired' => "Laptop {$laptop->code} tidak dapat dipinjam karena status dinonaktifkan.",
+            'maintenance' => "Laptop {$laptop->serial_number} sedang dalam perawatan.",
+            'retired' => "Laptop {$laptop->serial_number} tidak dapat dipinjam karena status dinonaktifkan.",
         ];
 
         $message = $statusMessages[$laptop->status] ?? 'Laptop sedang tidak dapat diproses.';
@@ -276,7 +276,6 @@ class LaptopTransactionController extends Controller
             ->where(function ($query) use ($identifier) {
                 $lower = Str::lower($identifier);
                 $query->where('qr_code', $identifier)
-                    ->orWhere('code', $identifier)
                     ->orWhere('serial_number', $identifier)
                     ->orWhereRaw('LOWER(name) = ?', [$lower]);
             })
@@ -293,15 +292,14 @@ class LaptopTransactionController extends Controller
             ->where(function ($query) use ($identifier) {
                 $like = '%' . $identifier . '%';
                 $lower = Str::lower($identifier);
-                $query->where('code', 'like', $like)
+                $query->where('serial_number', 'like', $like)
                     ->orWhere('name', 'like', $like)
-                    ->orWhere('serial_number', 'like', $like)
                     ->orWhereRaw('LOWER(name) LIKE ?', ['%' . $lower . '%']);
             })
             ->orWhereHas('owner', function ($query) use ($identifier) {
                 $query->where('student_number', 'like', '%' . $identifier . '%');
             })
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->first();
     }
 
@@ -326,7 +324,8 @@ class LaptopTransactionController extends Controller
     private function presentLaptop(Laptop $laptop): array
     {
         return [
-            'code' => $laptop->code,
+            'code' => $laptop->serial_number,
+            'serial_number' => $laptop->serial_number,
             'name' => $laptop->name,
             'status' => $laptop->status,
         ];

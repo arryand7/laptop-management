@@ -72,7 +72,7 @@
                         @forelse($ownedLaptops as $laptop)
                             <a href="{{ route('admin.laptops.show', $laptop) }}" class="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-xs hover:border-blue-200 hover:bg-blue-50">
                                 <span class="font-semibold text-slate-700">{{ $laptop->name }}</span>
-                                <span class="font-mono text-slate-500">{{ $laptop->code }}</span>
+                                <span class="font-mono text-slate-500">{{ $laptop->serial_number }}</span>
                             </a>
                         @empty
                             <span class="text-xs text-slate-500">Tidak ada laptop yang terdaftar sebagai milik siswa ini.</span>
@@ -87,7 +87,7 @@
                 @forelse($activeBorrowings as $transaction)
                     <li class="rounded-xl border border-blue-100 bg-blue-50/40 px-4 py-3">
                         <p class="font-semibold text-blue-700">{{ $transaction->laptop?->name }}</p>
-                        <p class="text-xs text-blue-600">Kode: {{ $transaction->laptop?->code }}</p>
+                        <p class="text-xs text-blue-600">Serial: {{ $transaction->laptop?->serial_number }}</p>
                         <p class="mt-1 text-xs text-blue-500">Jatuh tempo {{ $transaction->due_at?->translatedFormat('d M Y H:i') }}</p>
                     </li>
                 @empty

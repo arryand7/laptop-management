@@ -79,7 +79,6 @@ class BorrowController extends Controller
         $laptop = Laptop::with('owner')
             ->where(function ($query) use ($laptopIdentifier) {
                 $query->where('qr_code', $laptopIdentifier)
-                    ->orWhere('code', $laptopIdentifier)
                     ->orWhere('serial_number', $laptopIdentifier)
                     ->orWhereRaw('LOWER(name) = ?', [Str::lower($laptopIdentifier)]);
             })
@@ -90,9 +89,8 @@ class BorrowController extends Controller
 
         if (!$laptop) {
             $laptop = Laptop::with('owner')
-                ->where('code', 'like', "%{$laptopIdentifier}%")
+                ->where('serial_number', 'like', "%{$laptopIdentifier}%")
                 ->orWhere('name', 'like', "%{$laptopIdentifier}%")
-                ->orWhere('serial_number', 'like', "%{$laptopIdentifier}%")
                 ->orWhereHas('owner', function ($query) use ($laptopIdentifier) {
                     $query->where('student_number', 'like', "%{$laptopIdentifier}%");
                 })
@@ -100,14 +98,14 @@ class BorrowController extends Controller
         }
 
         if (!$laptop) {
-            return back()->withErrors(['laptop_qr' => 'Laptop tidak ditemukan. Gunakan kode, nama, serial, NIS pemilik, atau QR yang valid.'])->withInput();
+            return back()->withErrors(['laptop_qr' => 'Laptop tidak ditemukan. Gunakan serial number, nama, NIS pemilik, atau QR yang valid.'])->withInput();
         }
 
         if ($laptop->status !== 'available') {
             $statusMessages = [
-                'borrowed' => "Laptop {$laptop->code} sedang dipinjam dan belum dikembalikan.",
-                'maintenance' => "Laptop {$laptop->code} sedang dalam perawatan/maintenance.",
-                'retired' => "Laptop {$laptop->code} sedang DINONAKTIFKAN karena pelanggaran dan tidak dapat dipinjam.",
+                'borrowed' => "Laptop {$laptop->serial_number} sedang dipinjam dan belum dikembalikan.",
+                'maintenance' => "Laptop {$laptop->serial_number} sedang dalam perawatan/maintenance.",
+                'retired' => "Laptop {$laptop->serial_number} sedang DINONAKTIFKAN karena pelanggaran dan tidak dapat dipinjam.",
             ];
 
             $message = $statusMessages[$laptop->status] ?? 'Laptop sedang tidak tersedia untuk dipinjam.';
@@ -117,7 +115,7 @@ class BorrowController extends Controller
 
         if ($laptop->is_missing) {
             return back()->withErrors([
-                'laptop_qr' => "Laptop {$laptop->code} dilaporkan hilang dalam checklist terakhir dan tidak dapat dipinjam.",
+                'laptop_qr' => "Laptop {$laptop->serial_number} dilaporkan hilang dalam checklist terakhir dan tidak dapat dipinjam.",
             ])->withInput();
         }
 

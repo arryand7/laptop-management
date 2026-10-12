@@ -17,12 +17,13 @@ class LaptopFactory extends Factory
      */
     public function definition(): array
     {
+        $serialNumber = strtoupper(fake()->unique()->bothify('LP-###??'));
+
         return [
-            'code' => strtoupper(fake()->unique()->bothify('LP-###??')),
             'name' => fake()->randomElement(['Laptop Lab', 'Laptop Library', 'Laptop Presentation']) . ' ' . fake()->numberBetween(1, 99),
             'brand' => fake()->randomElement(['Dell', 'Lenovo', 'HP', 'Acer', 'Asus']),
             'model' => strtoupper(fake()->bothify('MOD-###')),
-            'serial_number' => strtoupper(fake()->unique()->bothify('SN########')),
+            'serial_number' => $serialNumber,
             'specifications' => [
                 'cpu' => fake()->randomElement(['Intel i5', 'Intel i7', 'AMD Ryzen 5']),
                 'ram' => fake()->randomElement(['8GB', '16GB']),
@@ -32,7 +33,7 @@ class LaptopFactory extends Factory
             'status' => 'available',
             'is_missing' => false,
             'owner_id' => null,
-            'qr_code' => strtoupper(Str::uuid()->toString()),
+            'qr_code' => $serialNumber,
             'notes' => null,
             'last_checked_at' => now()->subDays(fake()->numberBetween(0, 30)),
         ];

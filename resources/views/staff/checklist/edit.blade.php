@@ -52,7 +52,7 @@
                         <tr>
                             <th class="px-3 py-2">No</th>
                             <th class="px-3 py-2">Ada?</th>
-                            <th class="px-3 py-2">Kode Laptop</th>
+                            <th class="px-3 py-2">Serial Number</th>
                             <th class="px-3 py-2">Nama Laptop</th>
                             <th class="px-3 py-2">Pemilik</th>
                             <th class="px-3 py-2">Kelas</th>
@@ -78,7 +78,7 @@
                                         >
                                     </label>
                                 </td>
-                                <td class="px-3 py-3 font-mono text-sm font-semibold text-slate-700">{{ $laptop->code }}</td>
+                                <td class="px-3 py-3 font-mono text-sm font-semibold text-slate-700">{{ $laptop->serial_number }}</td>
                                 <td class="px-3 py-3 text-sm font-semibold text-slate-800">{{ $laptop->name }}</td>
                                 <td class="px-3 py-3 text-sm text-slate-600">
                                     @if($laptop->owner)

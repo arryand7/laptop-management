@@ -76,7 +76,7 @@
                         <table class="table table-striped table-bordered table-sm datatable-default w-100">
                             <thead class="text-xs uppercase text-slate-400">
                                 <tr>
-                                    <th class="pb-2">Kode</th>
+                                    <th class="pb-2">Serial Number</th>
                                     <th class="pb-2">Laptop</th>
                                     <th class="pb-2">Pemilik Laptop</th>
                                     <th class="pb-2">Dipinjam Oleh</th>
@@ -90,7 +90,7 @@
                                         $activeTrx = $laptop->borrowTransactions->first();
                                     @endphp
                                     <tr>
-                                        <td class="py-2 font-medium text-slate-700">{{ $laptop->code }}</td>
+                                        <td class="py-2 font-medium text-slate-700">{{ $laptop->serial_number }}</td>
                                         <td class="py-2 text-slate-600">{{ $laptop->name }}</td>
                                         <td class="py-2 text-slate-600">
                                             @if($laptop->owner)
@@ -223,7 +223,7 @@
                     <ul class="mt-4 space-y-3">
                         @forelse($studentSummary['active_borrowings'] as $transaction)
                             <li class="rounded-xl border border-blue-100 bg-blue-50/50 px-4 py-3">
-                                <p class="text-sm font-semibold text-blue-700">{{ $transaction->laptop?->name }} ({{ $transaction->laptop?->code }})</p>
+                                <p class="text-sm font-semibold text-blue-700">{{ $transaction->laptop?->name }} ({{ $transaction->laptop?->serial_number }})</p>
                                 <p class="text-xs text-blue-600">Jatuh tempo: {{ $transaction->due_at?->translatedFormat('d M Y H:i') }}</p>
                                 <p class="mt-1 text-xs text-blue-500">Keperluan: {{ $transaction->usage_purpose }}</p>
                             </li>

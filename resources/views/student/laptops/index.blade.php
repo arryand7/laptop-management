@@ -34,7 +34,7 @@
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <h2 class="text-lg font-semibold text-slate-800">{{ $laptop->name }}</h2>
-                                <p class="text-sm text-slate-500">{{ $laptop->code }}</p>
+                                <p class="text-sm text-slate-500">{{ $laptop->serial_number }}</p>
                             </div>
                             @if($statusLabel)
                                 <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $statusLabel[1] }}">

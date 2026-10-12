@@ -7,7 +7,7 @@
         <div>
             <a href="{{ route('admin.laptops.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Kembali</a>
             <h1 class="mt-1 text-xl font-semibold text-slate-800">{{ $laptop->name }}</h1>
-            <p class="text-sm text-slate-500">Kode {{ $laptop->code }} · {{ $laptop->brand }} {{ $laptop->model }}</p>
+            <p class="text-sm text-slate-500">Serial {{ $laptop->serial_number }} · {{ $laptop->brand }} {{ $laptop->model }}</p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('admin.laptops.qr', $laptop) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400">Cetak QR</a>

@@ -20,7 +20,7 @@ class ChecklistController extends Controller
         $filters = $this->extractFilters($request);
 
         $laptops = $this->laptopQueryWithFilters($filters)
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->get();
 
         $total = $laptops->count();
@@ -68,7 +68,7 @@ class ChecklistController extends Controller
         $filters = $this->extractFilters($request);
 
         $laptops = $this->laptopQueryWithFilters($filters)
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->get();
 
         if ($laptops->isEmpty()) {
@@ -100,8 +100,8 @@ class ChecklistController extends Controller
         return redirect()
             ->route('staff.checklist.show', $session)
             ->with('status', 'Checklist berhasil disimpan.')
-            ->with('checklist_borrowed', $borrowedLaptops->pluck('code')->all())
-            ->with('checklist_missing', $missingLaptops->pluck('code')->all());
+            ->with('checklist_borrowed', $borrowedLaptops->pluck('serial_number')->all())
+            ->with('checklist_missing', $missingLaptops->pluck('serial_number')->all());
     }
 
     public function history(): View
@@ -141,7 +141,7 @@ class ChecklistController extends Controller
         $laptops = $session->details
             ->map(fn (ChecklistDetail $detail) => $detail->laptop)
             ->filter()
-            ->sortBy('code')
+            ->sortBy('serial_number')
             ->values();
 
         $foundIds = $session->details
@@ -177,7 +177,7 @@ class ChecklistController extends Controller
 
         $laptops = Laptop::with('owner')
             ->whereIn('id', $laptopIds)
-            ->orderBy('code')
+            ->orderBy('serial_number')
             ->get();
 
         if ($laptops->isEmpty()) {

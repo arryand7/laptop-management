@@ -99,7 +99,7 @@ class StudentController extends Controller
             ->with('laptop')
             ->get();
 
-        $ownedLaptops = $student->ownedLaptops()->orderBy('code')->get();
+        $ownedLaptops = $student->ownedLaptops()->orderBy('serial_number')->get();
 
         $history = $student->borrowTransactionsAsStudent()
             ->with('laptop')

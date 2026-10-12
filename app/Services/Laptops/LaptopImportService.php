@@ -30,7 +30,6 @@ class LaptopImportService
      * @var array<string, string>
      */
     public const FIELD_LABELS = [
-        'code' => 'Kode',
         'name' => 'Nama',
         'brand' => 'Brand',
         'model' => 'Model',
@@ -42,7 +41,6 @@ class LaptopImportService
         'spec_ram' => 'RAM',
         'spec_storage' => 'Storage',
         'spec_os' => 'OS',
-        'qr_code' => 'QR Code',
     ];
 
     protected const SPEC_FIELDS = ['spec_cpu' => 'cpu', 'spec_ram' => 'ram', 'spec_storage' => 'storage', 'spec_os' => 'os'];
@@ -60,6 +58,11 @@ class LaptopImportService
             $normalized = [];
             foreach (array_keys(self::FIELD_LABELS) as $field) {
                 $normalized[$field] = $this->normalizeValue($row[$field] ?? null);
+            }
+
+            // Kompatibilitas mundur: jika serial_number kosong tapi 'code' ada di CSV/Excel lama
+            if ($normalized['serial_number'] === null && !empty($row['code'])) {
+                $normalized['serial_number'] = $this->normalizeValue($row['code']);
             }
 
             if (collect($normalized)->filter(fn ($v) => $v !== null)->isEmpty()) {
@@ -80,23 +83,15 @@ class LaptopImportService
      */
     public function analyze(array $rows): array
     {
-        $codes = $this->column($rows, 'code');
         $serials = $this->column($rows, 'serial_number');
-        $qrs = $this->column($rows, 'qr_code');
         $owners = $this->column($rows, 'owner_student_number');
 
         $candidates = Laptop::query()
             ->with('owner:id,student_number')
-            ->where(function ($query) use ($codes, $serials, $qrs) {
-                $query->whereIn('code', $codes)
-                    ->orWhereIn('serial_number', $serials)
-                    ->orWhereIn('qr_code', $qrs);
-            })
+            ->whereIn('serial_number', $serials)
             ->get();
 
-        $byCode = $candidates->keyBy(fn (Laptop $l) => strtolower($l->code));
         $bySerial = $candidates->whereNotNull('serial_number')->keyBy(fn (Laptop $l) => strtolower($l->serial_number));
-        $byQr = $candidates->whereNotNull('qr_code')->keyBy(fn (Laptop $l) => strtolower($l->qr_code));
 
         $borrowed = BorrowTransaction::query()
             ->whereIn('laptop_id', $candidates->pluck('id'))
@@ -106,22 +101,19 @@ class LaptopImportService
 
         $ownerIds = User::students()->whereIn('student_number', $owners)->pluck('id', 'student_number');
 
-        $seen = ['code' => [], 'serial_number' => [], 'qr_code' => []];
+        $seen = ['serial_number' => []];
         $result = [];
 
         foreach ($rows as $line => $row) {
             $errors = [];
             $this->validateFormat($row, $errors);
 
-            foreach (['code', 'serial_number', 'qr_code'] as $field) {
-                if ($row[$field] === null) {
-                    continue;
-                }
-                $key = strtolower($row[$field]);
-                if (isset($seen[$field][$key])) {
-                    $errors[] = self::FIELD_LABELS[$field] . " \"{$row[$field]}\" sudah muncul di baris {$seen[$field][$key]}.";
+            if ($row['serial_number'] !== null) {
+                $key = strtolower($row['serial_number']);
+                if (isset($seen['serial_number'][$key])) {
+                    $errors[] = self::FIELD_LABELS['serial_number'] . " \"{$row['serial_number']}\" sudah muncul di baris {$seen['serial_number'][$key]}.";
                 } else {
-                    $seen[$field][$key] = $line;
+                    $seen['serial_number'][$key] = $line;
                 }
             }
 
@@ -129,17 +121,9 @@ class LaptopImportService
                 $errors[] = "Siswa dengan NIS \"{$row['owner_student_number']}\" tidak ditemukan.";
             }
 
-            $matchCode = $row['code'] !== null ? $byCode->get(strtolower($row['code'])) : null;
-            $matchSerial = $row['serial_number'] !== null ? $bySerial->get(strtolower($row['serial_number'])) : null;
-            $existing = $matchCode ?? $matchSerial;
+            $existing = $row['serial_number'] !== null ? $bySerial->get(strtolower($row['serial_number'])) : null;
 
-            if ($matchCode && $matchSerial && $matchCode->id !== $matchSerial->id) {
-                $errors[] = "Konflik identitas: kode {$row['code']} milik laptop {$matchCode->name}, tetapi serial {$row['serial_number']} milik laptop {$matchSerial->name} ({$matchSerial->code}).";
-            }
-
-            $this->checkOwnedByOther('code', $row['code'], $byCode, $existing, $errors);
             $this->checkOwnedByOther('serial_number', $row['serial_number'], $bySerial, $existing, $errors);
-            $this->checkOwnedByOther('qr_code', $row['qr_code'], $byQr, $existing, $errors);
 
             if ($existing === null && $row['name'] === null) {
                 $errors[] = 'Laptop baru wajib mengisi Nama.';
@@ -151,7 +135,7 @@ class LaptopImportService
 
             $entry = [
                 'line' => $line,
-                'identifier' => $row['code'] ?? $row['serial_number'] ?? '-',
+                'identifier' => $row['serial_number'] ?? ($existing?->serial_number ?? '-'),
                 'name' => $row['name'] ?? $existing?->name,
                 'data' => $row,
                 'laptop_id' => $existing?->id,
@@ -202,12 +186,9 @@ class LaptopImportService
                 ->get()
                 ->keyBy('id');
 
-            // QR yang diisi eksplisit di file tidak boleh "dicuri" oleh QR otomatis laptop lain.
-            $reservedQr = $rows->pluck('data.qr_code')->filter()->map(fn ($v) => strtolower($v))->flip();
-
             foreach ($rows as $entry) {
                 if ($entry['status'] === self::STATUS_NEW) {
-                    $this->createLaptop($entry['data'], $ownerIds, $reservedQr);
+                    $this->createLaptop($entry['data'], $ownerIds);
                     $created++;
                 } elseif ($entry['status'] === self::STATUS_UPDATE) {
                     $laptop = $laptops->get($entry['laptop_id']);
@@ -231,7 +212,7 @@ class LaptopImportService
     /**
      * @param array<string, ?string> $data
      */
-    protected function createLaptop(array $data, $ownerIds, $reservedQr): Laptop
+    protected function createLaptop(array $data, $ownerIds): Laptop
     {
         $specs = [];
         foreach (self::SPEC_FIELDS as $field => $key) {
@@ -240,24 +221,17 @@ class LaptopImportService
             }
         }
 
-        $qr = $data['qr_code'];
-        if ($qr === null) {
-            $nis = $data['owner_student_number'];
-            $qr = $nis !== null && !$reservedQr->has(strtolower($nis)) && !Laptop::where('qr_code', $nis)->exists()
-                ? $nis
-                : CodeGenerator::laptopQr();
-        }
+        $serialNumber = $data['serial_number'] ?? CodeGenerator::laptopCode();
 
         return Laptop::create([
-            'code' => $data['code'] ?? CodeGenerator::laptopCode(),
             'name' => $data['name'],
             'brand' => $data['brand'],
             'model' => $data['model'],
-            'serial_number' => $data['serial_number'],
+            'serial_number' => $serialNumber,
             'status' => $data['status'] ?? 'available',
             'owner_id' => $data['owner_student_number'] !== null ? $ownerIds->get($data['owner_student_number']) : null,
             'specifications' => $specs ?: null,
-            'qr_code' => $qr,
+            'qr_code' => $serialNumber,
             'notes' => $data['notes'],
             'last_checked_at' => now(),
         ]);
@@ -284,6 +258,7 @@ class LaptopImportService
             $laptop->specifications = $specs;
         }
 
+        // qr_code diselaraskan otomatis dengan serial_number pada booted() saving hook
         $laptop->save();
     }
 
@@ -295,7 +270,7 @@ class LaptopImportService
     {
         $changes = [];
 
-        foreach (['code', 'name', 'brand', 'model', 'serial_number', 'status', 'notes', 'qr_code'] as $field) {
+        foreach (['name', 'brand', 'model', 'serial_number', 'status', 'notes'] as $field) {
             if ($row[$field] !== null && (string) $laptop->{$field} !== $row[$field]) {
                 $changes[$field] = [$laptop->{$field}, $row[$field]];
             }
@@ -323,8 +298,8 @@ class LaptopImportService
     protected function validateFormat(array $row, array &$errors): void
     {
         $limits = [
-            'code' => 50, 'name' => 255, 'brand' => 100, 'model' => 100, 'serial_number' => 100,
-            'owner_student_number' => 50, 'qr_code' => 255,
+            'name' => 255, 'brand' => 100, 'model' => 100, 'serial_number' => 100,
+            'owner_student_number' => 50,
             'spec_cpu' => 100, 'spec_ram' => 100, 'spec_storage' => 100, 'spec_os' => 100,
         ];
 
@@ -352,7 +327,7 @@ class LaptopImportService
         $owner = $index->get(strtolower($value));
 
         if ($owner && ($existing === null || $owner->id !== $existing->id)) {
-            $errors[] = self::FIELD_LABELS[$field] . " \"{$value}\" sudah dipakai laptop {$owner->name} ({$owner->code}).";
+            $errors[] = self::FIELD_LABELS[$field] . " \"{$value}\" sudah dipakai laptop {$owner->name} ({$owner->serial_number}).";
         }
     }
 
